@@ -12,6 +12,7 @@ Return:
 - 3 to 4 style directions when style is undecided, with one recommended default
 - one cover direction
 - a minimal HTML route or short prompt pack
+- an optional PPTX handoff after HTML when the user explicitly asks for `pptx` or `both`
 
 By default, keep these artifacts in conversation.
 Only materialize them as files if the user asks for persisted output or the repo clearly supports that workflow.
@@ -29,6 +30,7 @@ Only materialize them as files if the user asks for persisted output or the repo
    - restrained transitions
 6. Do not require a full reference-image round-trip in `quick`.
 7. Do not default to a full image-download workflow unless the user explicitly asks for image help.
+8. If the user wants `pptx` or `both`, preserve clear slide roles and add export hints only after the static HTML route is settled.
 
 ## Minimum Technical Contract
 
@@ -56,3 +58,9 @@ Escalate to `basic` when the user wants:
 - a confirmed slide script before HTML
 - per-page image handling
 - more explicit creator workflow artifacts
+
+## Optional PPTX Handoff
+
+- HTML still comes first in `quick`.
+- If the final target includes PPTX, prepare `deck_manifest.json` after the slide structure is stable.
+- Mark visually dense or heavily composited pages as likely `raster` candidates instead of pretending they will stay editable.

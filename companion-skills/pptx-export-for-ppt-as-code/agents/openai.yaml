@@ -1,0 +1,4 @@
+interface:
+  display_name: "PPTX Export for PPT as Code"
+  short_description: "Export PPT as Code decks to editable-or-raster hybrid PPTX files"
+  default_prompt: "Use $pptx-export-for-ppt-as-code to export a PPT as Code deck to PowerPoint from index.html, deck_manifest.json, and assets, using editable PPT content for simple slides and raster fallback for complex ones."

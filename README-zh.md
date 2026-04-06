@@ -1,5 +1,7 @@
 # PPT as Code
 
+PPTX 导出说明：这份开源版现在包含一条可选的 `PPTX export` 后处理路线。先锁定静态 HTML deck，再通过 `deck_manifest.json` 交给 companion skill 导出 `.pptx`。
+
 中文说明。英文版请看 [README.md](./README.md)。
 
 `PPT as Code` 是一个面向内容创作者和产品表达场景的 HTML 演示文稿 skill。
@@ -137,11 +139,27 @@ ppt-as-code-open/
 |   |-- advanced-mode.md
 |   |-- visual-and-images.md
 |   |-- component-libraries.md
+|   |-- pptx-export-handoff.md
 |   `-- evolution-log.md
+|-- companion-skills/
+|   `-- pptx-export-for-ppt-as-code/
+|       |-- SKILL.md
+|       |-- agents/
+|       |   `-- openai.yaml
+|       `-- references/
+|           |-- manifest-contract.md
+|           `-- rendering-rules.md
 `-- workflows/
     |-- mode-delivery.md
     `-- evolution-writeback.md
 ```
+
+## PPTX Export Route
+
+- `ppt-as-code` 继续负责主题、风格、脚本、图片和静态 HTML。
+- `pptx-export-for-ppt-as-code` 负责读取 `index.html`、`deck_manifest.json` 和 `assets/`，然后输出 `output.pptx`。
+- 简单页优先走可编辑 PPT 元素，复杂页允许整页截图 fallback。
+- 动效仍然只属于 HTML，不强行翻译成 PowerPoint 动画。
 
 ## 三种模式分别会给什么
 

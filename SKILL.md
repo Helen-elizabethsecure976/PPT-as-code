@@ -3,15 +3,15 @@ name: ppt-as-code
 description: >
   Build HTML-based web presentations with a creator-first workflow: keep quick mode lightweight,
   use basic mode for confirmed deck planning plus script plus image flow, and use advanced mode
-  for reference-driven decks, static-first delivery, optional motion follow-up, and safe
-  fallbacks when file persistence or web search is unavailable.
+  for reference-driven decks, static-first delivery, optional motion follow-up, optional PPTX
+  export handoff, and safe fallbacks when file persistence or web search is unavailable.
 ---
 
 # PPT as Code
 
 > Plan and build HTML-based presentations with a creator-first staged workflow.
 
-**Core Pipeline**: `Ingest -> Route Mode -> Load References -> Diagnose Gaps -> Produce Artifacts -> Confirm Key Decisions -> Deliver HTML`
+**Core Pipeline**: `Ingest -> Route Mode -> Load References -> Diagnose Gaps -> Produce Artifacts -> Confirm Key Decisions -> Deliver HTML -> Optional PPTX Export`
 
 ---
 
@@ -35,6 +35,16 @@ description: >
 > - Default delivery is **staged artifacts + HTML route or prompt pack + image plan**, not a long code dump.
 > - When the user is a creator or wants to move fast, prefer staged prompts and intermediate artifacts over large code blocks by default.
 > - Use full implementation only when the user explicitly asks for code or the workflow has reached the final HTML stage.
+
+> [!IMPORTANT]
+> ### PPTX Export Handoff
+>
+> - `ppt-as-code` remains an **HTML-first** presentation skill.
+> - PPTX export is an optional **final-delivery post-process**, not a replacement for the HTML workflow.
+> - Default export target is `html`; allow `pptx` or `both` when the user explicitly wants PowerPoint delivery.
+> - When the target includes PPTX, finish the static HTML pass first, then produce `deck_manifest.json`, then hand off to `pptx-export-for-ppt-as-code`.
+> - `deck_manifest.json` is the export bridge and source of truth for PPTX delivery; do not rely on ad-hoc DOM scraping as the primary route.
+> - PPTX export is static-only: motion is downgraded to a static state, simple pages should stay editable, and complex pages may fall back to full-slide raster images.
 
 > [!IMPORTANT]
 > ### Persistence Strategy
@@ -102,6 +112,7 @@ This skill operates as a single inline agent - no role switching required.
 | advanced mode workflow | `${SKILL_DIR}/references/advanced-mode.md` | required only when mode = `advanced` |
 | visual and image workflow | `${SKILL_DIR}/references/visual-and-images.md` | required when style, references, or images are in scope |
 | component library guidance | `${SKILL_DIR}/references/component-libraries.md` | required only when the route needs libraries |
+| PPTX export handoff | `${SKILL_DIR}/references/pptx-export-handoff.md` | required only when export target = `pptx` or `both` |
 
 ### Workflows
 
@@ -123,6 +134,7 @@ This skill operates as a single inline agent - no role switching required.
    - topic
    - audience
    - delivery context: live presentation, shared link, async reading, or screen recording
+   - export target: `html`, `pptx`, `both`, or unspecified
    - current stack: native HTML, React, Next.js, reveal.js, or unspecified
    - what the user already provided: notes, outline, raw material, references, images, existing code
 2. Diagnose missing inputs:
@@ -149,6 +161,9 @@ This skill operates as a single inline agent - no role switching required.
    - `image_plan.md`
    - `index.html`
    - `assets/`
+7. If the export target includes PPTX, add the optional export artifacts:
+   - `deck_manifest.json`
+   - `output.pptx`
 
 `CHECKPOINT`:
 
@@ -199,6 +214,7 @@ This skill operates as a single inline agent - no role switching required.
    - `advanced` -> `${SKILL_DIR}/references/advanced-mode.md`
 2. Load `${SKILL_DIR}/references/visual-and-images.md` when style, references, or images are relevant.
 3. Load `${SKILL_DIR}/references/component-libraries.md` only when the route truly needs component or chart libraries.
+4. Load `${SKILL_DIR}/references/pptx-export-handoff.md` only when the export target is `pptx` or `both`.
 
 `CHECKPOINT`:
 
@@ -225,6 +241,7 @@ This skill operates as a single inline agent - no role switching required.
    - `quick`: brief or outline, style directions, minimal HTML route
    - `basic`: brief, breakdown, style options, script, image plan, HTML
    - `advanced`: same as `basic`, plus structured design constraints and optional motion follow-up
+   - `pptx` or `both`: add manifest and PPTX handoff after static HTML is ready
 4. Record the missing gaps that must be resolved before HTML is allowed to begin.
 
 `CHECKPOINT`:
@@ -257,7 +274,8 @@ This skill operates as a single inline agent - no role switching required.
    - one cover direction
    - a minimum viable HTML route or short prompt pack
 6. If the user asked for images in `quick`, use the page-thesis keyword workflow from `visual-and-images.md`, but keep the image plan lightweight.
-7. Include an upgrade path toward `basic`.
+7. If the user wants `pptx` or `both`, keep the slide roles clear enough to support a later manifest handoff.
+8. Include an upgrade path toward `basic`.
 
 `CHECKPOINT`:
 
@@ -478,6 +496,7 @@ This skill operates as a single inline agent - no role switching required.
 6. Attempt to download images into `assets/` only when downloading is available and persistence is enabled.
 7. If download fails, record the same fallback fields required by `basic` and surface the source link to the user.
 8. If persistence is enabled, materialize these as `deck_script.md` and `image_plan.md`.
+9. If the export target includes PPTX, prepare the slide content with explicit export hints after the static deck is approved.
 
 `BLOCKING`: Ask the user to confirm the script and image plan before static HTML begins.
 
@@ -503,6 +522,7 @@ This skill operates as a single inline agent - no role switching required.
 2. Keep the approved content order and visual hierarchy intact.
 3. Do not add advanced motion in this step unless the user explicitly asked to skip the static-first pass.
 4. If persistence is enabled, materialize the output as `index.html`.
+5. If the export target includes PPTX, treat this static pass as the structure lock for `deck_manifest.json`.
 
 `BLOCKING`: Ask the user whether they want a motion pass after reviewing the static deck.
 
@@ -550,14 +570,21 @@ This skill operates as a single inline agent - no role switching required.
 `EXECUTION`:
 
 1. Deliver in this order:
+   - export target
    - chosen mode and why
    - artifact status
    - visual direction or chosen reference or fallback direction
    - script status
    - image status, including failed downloads and manual-download links
    - static HTML status
+   - `deck_manifest.json` status when the export target includes PPTX
+   - `output.pptx` status or handoff status when the export target includes PPTX
    - optional motion status when relevant
-2. Before calling the deck final, verify:
+2. If the export target includes `pptx` or `both`:
+   - verify the static HTML pass is complete and approved enough to freeze slide structure
+   - prepare `deck_manifest.json` with `deckTitle`, `slideSize`, `themeTokens`, and per-slide export hints
+   - hand off `index.html`, `deck_manifest.json`, and `assets/` to `pptx-export-for-ppt-as-code`
+3. Before calling the deck final, verify:
    - it still feels like a presentation
    - page furniture exists where needed
    - slide roles read clearly
@@ -571,4 +598,5 @@ This skill operates as a single inline agent - no role switching required.
 - [x] Final delivery follows the staged artifact order
 - [x] Presentation-first checks performed
 - [x] Image fallback links surfaced when needed
+- [x] PPTX handoff prepared when requested
 ```

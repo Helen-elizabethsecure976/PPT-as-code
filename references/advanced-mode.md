@@ -15,6 +15,7 @@ Return a staged build with these artifacts:
 - deck script
 - image plan
 - static HTML
+- optional `deck_manifest.json` and PPTX handoff when the user asks for `pptx` or `both`
 - optional motion pass after approval
 
 By default, keep these artifacts in conversation.
@@ -36,8 +37,9 @@ Only materialize them as files if the user asks for persisted output or the repo
 12. Record failed downloads with source links.
 13. Wait for the user to confirm the script and image plan.
 14. Generate static HTML.
-15. Ask whether to add motion.
-16. Only after approval, add motion as a second pass.
+15. If the user wants `pptx` or `both`, prepare the manifest and export hints after the static deck is approved.
+16. Ask whether to add motion.
+17. Only after approval, add motion as a second pass.
 
 ## Hard Rules
 
@@ -93,3 +95,9 @@ If the user requests motion after the static pass:
 - preserve `prefers-reduced-motion`
 - keep one active slide at a time
 - avoid turning the deck into a generic animated landing page
+
+## Optional PPTX Handoff
+
+- PPTX export is downstream from the approved static deck.
+- Motion stays in HTML and should be ignored by the PPTX handoff.
+- Preserve `exportModeHint` so simple slides can stay editable and complex slides can fall back to raster.

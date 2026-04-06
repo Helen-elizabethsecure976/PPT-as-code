@@ -14,6 +14,7 @@ Return a staged artifact bundle, not just a final code block:
 - deck script
 - image plan
 - static HTML
+- optional `deck_manifest.json` and PPTX handoff when the user asks for `pptx` or `both`
 
 By default, keep these artifacts in conversation.
 Only materialize them as files such as `deck_brief.md`, `theme_breakdown.md`, `style_options.md`, `deck_script.md`, `image_plan.md`, and `index.html` if the user asks for persisted output or the repo clearly supports that workflow.
@@ -34,6 +35,7 @@ Only materialize them as files such as `deck_brief.md`, `theme_breakdown.md`, `s
 12. Record failed downloads with source links.
 13. Wait for user confirmation of the script plus image plan.
 14. Generate static HTML.
+15. If the user wants `pptx` or `both`, prepare the manifest and export hints after the static deck is accepted.
 
 ## Blocking Rules
 
@@ -78,6 +80,12 @@ The image-plan artifact should record:
 - chosen image or source candidate
 - download status
 - fallback link when the download failed
+
+## Optional PPTX Handoff
+
+- Do not start PPTX export before the confirmed static HTML pass.
+- When PPTX is requested, prepare `deck_manifest.json` from the approved deck script, image plan, and final slide structure.
+- Keep simple slides editable when possible and mark dense, highly layered slides as `raster`.
 
 ## When To Escalate To Advanced
 

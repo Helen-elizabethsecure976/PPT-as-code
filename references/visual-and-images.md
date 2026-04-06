@@ -97,6 +97,12 @@ Required fallback fields:
 Do not hide download failures.
 Surface the source links or search strings to the user so they can manually acquire the images when needed.
 
+When the final target includes PPTX:
+
+1. prefer resolved local asset paths because the PPTX exporter depends on them
+2. keep unresolved images clearly marked in the manifest or image plan
+3. if a slide depends on a missing asset and cannot render natively, mark it as a likely `raster` fallback
+
 ## Cover And Body Image Logic
 
 - Cover images should carry the topic in one glance.

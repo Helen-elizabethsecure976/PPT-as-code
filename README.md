@@ -3,6 +3,15 @@
 English README. For Chinese, see [README-zh.md](./README-zh.md).
 
 `PPT as Code` is a creator-first skill for planning and building HTML-based presentations.
+It is now paired with an optional PPTX-export handoff for teams that want PowerPoint delivery after the static HTML deck is locked.
+
+## Update Log
+
+### 2026-04-06
+
+- Simplified the PPTX export route to a screenshot-only workflow.
+- Removed editable, hybrid, and template-rebuild PPTX claims from the export spec.
+- Clarified that HTML remains the source of truth and PPTX is a fidelity-first delivery format.
 
 It is designed for workflows where a deck is not just "some slides," but a staged communication artifact that needs:
 
@@ -26,6 +35,7 @@ It removes private workspace assumptions, defaults to conversation-first artifac
 - Safe file behavior. By default, artifacts stay in the conversation and only become files when the user wants persisted output or the repo clearly supports it.
 - Safe network behavior. If browsing or downloading is unavailable, the workflow falls back instead of pretending those actions happened.
 - Static-first delivery. In `advanced`, motion comes only after the static deck is reviewed.
+- Optional PPTX delivery. HTML stays first, then a companion export skill can turn the approved deck into a screenshot-based `.pptx`.
 
 ## Feature Set
 
@@ -45,6 +55,8 @@ It also supports:
 - page-level keyword extraction for image search
 - manual-download fallback when image downloads fail
 - optional persisted artifacts such as `deck_brief.md`, `deck_script.md`, `image_plan.md`, and `index.html`
+- optional export targets: `html`, `pptx`, or `both`
+- a manifest handoff via `deck_manifest.json`
 
 ## How It Works
 
@@ -56,7 +68,8 @@ At a high level, the skill follows a staged deck workflow:
 4. Produce staged artifacts before final HTML.
 5. Use explicit confirmation checkpoints for higher-risk decisions.
 6. Generate static HTML first.
-7. Add motion later only when the workflow and user approval justify it.
+7. If needed, bridge the approved deck into `deck_manifest.json` for PPTX export.
+8. Add motion later only when the workflow and user approval justify it.
 
 The core idea is simple:
 
@@ -116,11 +129,30 @@ ppt-as-code-open/
 |   |-- advanced-mode.md
 |   |-- visual-and-images.md
 |   |-- component-libraries.md
+|   |-- pptx-export-handoff.md
 |   `-- evolution-log.md
+|-- companion-skills/
+|   `-- pptx-export-for-ppt-as-code/
+|       |-- SKILL.md
+|       |-- agents/
+|       |   `-- openai.yaml
+|       `-- references/
+|           |-- manifest-contract.md
+|           `-- rendering-rules.md
 `-- workflows/
     |-- mode-delivery.md
     `-- evolution-writeback.md
 ```
+
+## PPTX Export Route
+
+This package keeps HTML authoring and PPTX delivery separated on purpose.
+
+- `ppt-as-code` owns the deck workflow, script, imagery, and final static HTML.
+- `pptx-export-for-ppt-as-code` consumes `index.html`, `deck_manifest.json`, and `assets/`.
+- Every slide is exported from a stable HTML render state as a screenshot.
+- PowerPoint is treated as a fidelity-first delivery container, not a native reconstruction target.
+- Motion stays HTML-only.
 
 ## Mode Guide
 
