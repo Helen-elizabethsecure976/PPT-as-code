@@ -4,14 +4,16 @@ description: >
   Build HTML-based web presentations with a creator-first workflow: keep quick mode lightweight,
   use basic mode for confirmed deck planning plus script plus image flow, and use advanced mode
   for reference-driven decks, static-first delivery, optional motion follow-up, optional PPTX
-  export handoff, and safe fallbacks when file persistence or web search is unavailable.
+  export handoff, optional source-material normalization, and safe fallbacks when file persistence
+  or web search is unavailable. Also supports an optional Slidev-inspired `deck.md` draft input
+  layer.
 ---
 
 # PPT as Code
 
 > Plan and build HTML-based presentations with a creator-first staged workflow.
 
-**Core Pipeline**: `Ingest -> Route Mode -> Load References -> Diagnose Gaps -> Produce Artifacts -> Confirm Key Decisions -> Deliver HTML -> Optional PPTX Export`
+**Core Pipeline**: `Ingest -> Normalize Source Material When Needed -> Derive Source Scenes When Needed -> Detect Input Mode -> If DSL: Parse deck.md -> Compile deck_source.json -> Route Mode -> Load References -> Diagnose Gaps -> Produce Artifacts -> Confirm Key Decisions -> Run Pre-HTML QA -> Deliver HTML -> Optional PPTX Export`
 
 ---
 
@@ -47,6 +49,35 @@ description: >
 > - PPTX export is static-only: motion is downgraded to a static state, simple pages should stay editable, and complex pages may fall back to full-slide raster images.
 
 > [!IMPORTANT]
+> ### Slidev-Inspired DSL Input
+>
+> - `ppt-as-code` may accept an optional `deck.md` draft as a Slidev-inspired authoring input.
+> - This is a **draft input layer**, not a compatibility promise for real Slidev projects or syntax.
+> - When `deck.md` is present, parse it into `deck_source.json` before entering the normal `quick`, `basic`, or `advanced` workflow.
+> - `deck.md` can speed up ideation, but it must not bypass `basic` or `advanced` confirmation gates.
+> - `deck_source.json` is the normalized internal representation for DSL input; it is not the final delivery artifact.
+
+> [!IMPORTANT]
+> ### Source Normalization Rules
+>
+> - If the user starts from external source material rather than a slide outline, normalize that material before deck breakdown or script work.
+> - When these adapters are available in the environment, use them proportionally:
+>   - PDF -> `pdf_to_md.py`
+>   - DOCX / EPUB / HTML / LaTeX -> `doc_to_md.py`
+>   - ordinary web pages -> `web_to_md.py`
+>   - high-friction pages such as WeChat or anti-bot pages -> `web_to_md.cjs`
+> - The normalized markdown becomes the working source for deck planning; it is not the final deck.
+> - If no adapter is available, do not block the workflow. Summarize the source manually and continue with an explicit note about the fallback.
+
+> [!IMPORTANT]
+> ### Source-To-Scenes Rules
+>
+> - If the starting material is a long article, PDF, document, or normalized web source, derive a preliminary scene map before writing the confirmed breakdown.
+> - The source-to-scenes pass should cluster the material into likely slide groups, not final slides.
+> - Use it to identify likely page sequence, candidate scene roles, strong quotes, strong stats, and image-worthy sections.
+> - Treat `source_scene_map.md` as a planning accelerator, not as a replacement for the confirmed breakdown.
+
+> [!IMPORTANT]
 > ### Persistence Strategy
 >
 > - Default to **conversation-first artifacts**.
@@ -75,6 +106,13 @@ description: >
 > - Never search body images from the full deck topic alone.
 > - For each page that needs an image, first compress the page into one thesis, then derive page-level keywords, then search.
 > - If image download fails, keep the source link, record the failure, and hand the link to the user for manual download instead of blocking the run.
+
+> [!IMPORTANT]
+> ### Pre-HTML Quality Check
+>
+> - Before generating static HTML, run a lightweight QA pass over the approved artifacts.
+> - The QA pass must check page sequence coherence, title hierarchy consistency, image-bearing slides that still lack usable assets or fallback links, and whether each slide has a clear page thesis.
+> - If the QA pass finds gaps, resolve or surface them before HTML is treated as ready.
 
 > [!IMPORTANT]
 > ### Network And Tool Fallbacks
@@ -113,6 +151,11 @@ This skill operates as a single inline agent - no role switching required.
 | visual and image workflow | `${SKILL_DIR}/references/visual-and-images.md` | required when style, references, or images are in scope |
 | component library guidance | `${SKILL_DIR}/references/component-libraries.md` | required only when the route needs libraries |
 | PPTX export handoff | `${SKILL_DIR}/references/pptx-export-handoff.md` | required only when export target = `pptx` or `both` |
+| source normalization guide | `${SKILL_DIR}/references/source-normalization.md` | required only when the input starts from PDF, DOCX, EPUB, HTML, LaTeX, or web pages |
+| source-to-scenes guide | `${SKILL_DIR}/references/source-to-scenes.md` | required only when long source material needs pre-breakdown scene mapping |
+| quality checker guide | `${SKILL_DIR}/references/quality-checker.md` | required before static HTML generation in non-trivial runs |
+| deck DSL reference | `${SKILL_DIR}/references/deck-dsl.md` | required only when input mode = `dsl` |
+| deck source contract | `${SKILL_DIR}/references/deck-source-contract.md` | required only when input mode = `dsl` |
 
 ### Workflows
 
@@ -134,9 +177,11 @@ This skill operates as a single inline agent - no role switching required.
    - topic
    - audience
    - delivery context: live presentation, shared link, async reading, or screen recording
+   - source material form: notes, article, PDF, DOCX, EPUB, HTML, LaTeX, ordinary web page, high-friction web page, or `deck.md`
+   - input mode: `structured`, `dsl`, or unspecified
    - export target: `html`, `pptx`, `both`, or unspecified
    - current stack: native HTML, React, Next.js, reveal.js, or unspecified
-   - what the user already provided: notes, outline, raw material, references, images, existing code
+   - what the user already provided: notes, outline, raw material, references, images, existing code, or `deck.md`
 2. Diagnose missing inputs:
    - theme breakdown
    - style direction
@@ -164,6 +209,12 @@ This skill operates as a single inline agent - no role switching required.
 7. If the export target includes PPTX, add the optional export artifacts:
    - `deck_manifest.json`
    - `output.pptx`
+8. If the input mode is `dsl`, add the optional draft artifact:
+   - `deck_source.json`
+9. If the request starts from long source material, add the optional planning artifact:
+   - `source_scene_map.md`
+10. For non-trivial `basic` or `advanced` runs, add the optional QA artifact:
+   - `qa_report.md`
 
 `CHECKPOINT`:
 
@@ -172,6 +223,56 @@ This skill operates as a single inline agent - no role switching required.
 - [x] Presentation request identified
 - [x] Missing inputs diagnosed
 - [x] Persistence strategy defined
+- [ ] Next: auto-proceed to Step 1A
+```
+
+---
+
+### Step 1A: Source Normalization, Source-To-Scenes, Input Mode Detection, And DSL Compilation
+
+`GATE`: Step 1 complete; the request is clear enough to identify the input layer.
+
+`EXECUTION`:
+
+1. Detect whether source normalization is needed:
+   - PDF -> use `pdf_to_md.py` when available
+   - DOCX / EPUB / HTML / LaTeX -> use `doc_to_md.py` when available
+   - ordinary web pages -> use `web_to_md.py` when available
+   - high-friction web pages such as WeChat -> use `web_to_md.cjs` when available
+2. If source normalization is needed:
+   - read `${SKILL_DIR}/references/source-normalization.md`
+   - normalize the material into markdown before deck planning begins
+   - use the normalized markdown as deck-source input for later breakdown, script, and image work
+   - if the adapter is unavailable, summarize manually and continue with an explicit fallback note
+3. If the source is long-form and not already slide-shaped:
+   - read `${SKILL_DIR}/references/source-to-scenes.md`
+   - derive a scene map that clusters the source into likely page groups, scene roles, quotes, stats, and image-worthy sections
+   - materialize it as `source_scene_map.md` when artifact persistence is enabled
+4. Detect input mode:
+   - `dsl` when the user provides `deck.md` or explicitly asks to start from a deck draft file
+   - otherwise `structured`
+5. If the input mode is `dsl`:
+   - read `${SKILL_DIR}/references/deck-dsl.md`
+   - read `${SKILL_DIR}/references/deck-source-contract.md`
+   - parse `deck.md` as a Slidev-inspired DSL, not as real Slidev syntax
+   - normalize the result into `deck_source.json`
+6. Apply the required fallbacks while compiling:
+   - missing frontmatter fields -> fill defaults
+   - unknown layout -> downgrade to `bullets`
+   - missing title -> infer from the first meaningful text
+   - missing keywords -> leave empty for later image planning
+   - unsupported Slidev-only syntax -> preserve as text and clearly label the boundary
+7. Keep `deck.md` as a draft input only; do not treat it as the final source of truth for HTML or export.
+
+`CHECKPOINT`:
+
+```markdown
+## Step 1A Complete
+- [x] Source material normalized or fallback noted when needed
+- [x] Source scenes derived when needed
+- [x] Input mode detected
+- [x] deck.md parsed when present
+- [x] deck_source.json prepared when needed
 - [ ] Next: auto-proceed to Step 2
 ```
 
@@ -179,7 +280,7 @@ This skill operates as a single inline agent - no role switching required.
 
 ### Step 2: Mode Routing
 
-`GATE`: Step 1 complete; the request is clear enough to choose a mode.
+`GATE`: Step 1A complete; the request is clear enough to choose a mode.
 
 `EXECUTION`:
 
@@ -214,7 +315,11 @@ This skill operates as a single inline agent - no role switching required.
    - `advanced` -> `${SKILL_DIR}/references/advanced-mode.md`
 2. Load `${SKILL_DIR}/references/visual-and-images.md` when style, references, or images are relevant.
 3. Load `${SKILL_DIR}/references/component-libraries.md` only when the route truly needs component or chart libraries.
-4. Load `${SKILL_DIR}/references/pptx-export-handoff.md` only when the export target is `pptx` or `both`.
+4. Load `${SKILL_DIR}/references/source-normalization.md` only when the source input needs normalization from document or web material.
+5. Load `${SKILL_DIR}/references/source-to-scenes.md` only when long source material needs pre-breakdown scene mapping.
+6. Load `${SKILL_DIR}/references/quality-checker.md` before static HTML generation in non-trivial runs.
+7. Load `${SKILL_DIR}/references/pptx-export-handoff.md` only when the export target is `pptx` or `both`.
+8. Load `${SKILL_DIR}/references/deck-dsl.md` and `${SKILL_DIR}/references/deck-source-contract.md` only when the input mode is `dsl`.
 
 `CHECKPOINT`:
 
@@ -241,6 +346,9 @@ This skill operates as a single inline agent - no role switching required.
    - `quick`: brief or outline, style directions, minimal HTML route
    - `basic`: brief, breakdown, style options, script, image plan, HTML
    - `advanced`: same as `basic`, plus structured design constraints and optional motion follow-up
+   - long source input: add `source_scene_map.md` before the confirmed breakdown
+   - `dsl`: add `deck_source.json` as the normalized draft input artifact
+   - non-trivial runs: add `qa_report.md` as the pre-HTML QA artifact
    - `pptx` or `both`: add manifest and PPTX handoff after static HTML is ready
 4. Record the missing gaps that must be resolved before HTML is allowed to begin.
 
@@ -267,15 +375,17 @@ This skill operates as a single inline agent - no role switching required.
    - core message
    - missing inputs
 2. If the theme is still vague, create a lightweight outline before implementation.
-3. If style is missing, recommend **3 to 4 style directions** and clearly mark one as the default recommendation.
-4. Continue with the recommended direction unless the user explicitly wants to choose.
-5. Produce:
+3. If normalized source material exists, use a compact source-to-scenes pass to compress it into likely page groups before locking the quick outline.
+4. If style is missing, recommend **3 to 4 style directions** and clearly mark one as the default recommendation.
+5. Continue with the recommended direction unless the user explicitly wants to choose.
+6. Run a lightweight pre-HTML QA pass before finalizing the quick HTML route.
+7. Produce:
    - a minimal slide structure
    - one cover direction
    - a minimum viable HTML route or short prompt pack
-6. If the user asked for images in `quick`, use the page-thesis keyword workflow from `visual-and-images.md`, but keep the image plan lightweight.
-7. If the user wants `pptx` or `both`, keep the slide roles clear enough to support a later manifest handoff.
-8. Include an upgrade path toward `basic`.
+8. If the user asked for images in `quick`, use the page-thesis keyword workflow from `visual-and-images.md`, but keep the image plan lightweight.
+9. If the user wants `pptx` or `both`, keep the slide roles clear enough to support a later manifest handoff.
+10. Include an upgrade path toward `basic`.
 
 `CHECKPOINT`:
 
@@ -302,13 +412,14 @@ This skill operates as a single inline agent - no role switching required.
    - transparent
    - large footprint
    - small footprint
-4. Prepare the theme-breakdown artifact before any slide script exists.
-5. The theme-breakdown artifact must define:
+4. If normalized long-form source exists, derive `source_scene_map.md` before the confirmed breakdown.
+5. Prepare the theme-breakdown artifact before any slide script exists.
+6. The theme-breakdown artifact must define:
    - the deck thesis
    - the page sequence
    - what each slide is trying to say
    - which pages likely need images
-6. If persistence is enabled, materialize these as `deck_brief.md`, `style_options.md`, and `theme_breakdown.md`.
+7. If persistence is enabled, materialize these as `deck_brief.md`, `style_options.md`, `theme_breakdown.md`, and `source_scene_map.md` when relevant.
 
 `BLOCKING`: Ask the user to confirm the theme breakdown before any script generation begins.
 
@@ -396,13 +507,21 @@ This skill operates as a single inline agent - no role switching required.
 
 `EXECUTION`:
 
-1. Generate the static HTML output.
-2. Keep the deck presentation-first:
+1. Read `${SKILL_DIR}/references/quality-checker.md`.
+2. Run a lightweight QA pass over the approved breakdown, script, and image plan.
+3. Verify in `qa_report.md` or inline QA notes:
+   - page sequence coherence
+   - title hierarchy consistency
+   - image gaps or fallback links
+   - page-thesis coverage
+4. Resolve or surface any remaining gaps before HTML generation.
+5. Generate the static HTML output.
+6. Keep the deck presentation-first:
    - one active slide at a time
    - clear navigation state
    - visible progress or page furniture
-3. If persistence is enabled, materialize the final output as `index.html`.
-4. If the user wants a final artifact, prefer a self-contained HTML file or a locally runnable folder.
+7. If persistence is enabled, materialize the final output as `index.html` and `qa_report.md` when needed.
+8. If the user wants a final artifact, prefer a self-contained HTML file or a locally runnable folder.
 
 `CHECKPOINT`:
 
@@ -486,17 +605,18 @@ This skill operates as a single inline agent - no role switching required.
 
 1. Translate the chosen reference, or the chosen style direction in fallback mode, into structured design constraints before HTML work begins.
 2. Use a JSON design style system or an equivalent structured constraint format.
-3. If local writing-style notes exist, scan likely style docs such as `voice_profile.md`, `brand.md`, `writing_style.md`, or project notes.
-4. Prepare the deck-script artifact.
-5. For each slide that needs imagery:
+3. If normalized long-form source exists, derive `source_scene_map.md` before locking the final script shape.
+4. If local writing-style notes exist, scan likely style docs such as `voice_profile.md`, `brand.md`, `writing_style.md`, or project notes.
+5. Prepare the deck-script artifact.
+6. For each slide that needs imagery:
    - compress the slide into one thesis
    - derive exactly **3 to 4 page-level keywords**
    - search using those keywords plus the chosen style direction when browsing is available
    - if browsing is unavailable, provide search strings and image intent instead of pretending search happened
-6. Attempt to download images into `assets/` only when downloading is available and persistence is enabled.
-7. If download fails, record the same fallback fields required by `basic` and surface the source link to the user.
-8. If persistence is enabled, materialize these as `deck_script.md` and `image_plan.md`.
-9. If the export target includes PPTX, prepare the slide content with explicit export hints after the static deck is approved.
+7. Attempt to download images into `assets/` only when downloading is available and persistence is enabled.
+8. If download fails, record the same fallback fields required by `basic` and surface the source link to the user.
+9. If persistence is enabled, materialize these as `deck_script.md`, `image_plan.md`, and `source_scene_map.md` when relevant.
+10. If the export target includes PPTX, prepare the slide content with explicit export hints after the static deck is approved.
 
 `BLOCKING`: Ask the user to confirm the script and image plan before static HTML begins.
 
@@ -518,11 +638,19 @@ This skill operates as a single inline agent - no role switching required.
 
 `EXECUTION`:
 
-1. Generate the static HTML output first.
-2. Keep the approved content order and visual hierarchy intact.
-3. Do not add advanced motion in this step unless the user explicitly asked to skip the static-first pass.
-4. If persistence is enabled, materialize the output as `index.html`.
-5. If the export target includes PPTX, treat this static pass as the structure lock for `deck_manifest.json`.
+1. Read `${SKILL_DIR}/references/quality-checker.md`.
+2. Run a lightweight QA pass over the approved breakdown, script, image plan, and design constraints.
+3. Verify in `qa_report.md` or inline QA notes:
+   - page sequence coherence
+   - title hierarchy consistency
+   - image gaps or fallback links
+   - page-thesis coverage
+4. Resolve or surface any remaining gaps before HTML generation.
+5. Generate the static HTML output first.
+6. Keep the approved content order and visual hierarchy intact.
+7. Do not add advanced motion in this step unless the user explicitly asked to skip the static-first pass.
+8. If persistence is enabled, materialize the output as `index.html` and `qa_report.md` when needed.
+9. If the export target includes PPTX, treat this static pass as the structure lock for `deck_manifest.json`.
 
 `BLOCKING`: Ask the user whether they want a motion pass after reviewing the static deck.
 

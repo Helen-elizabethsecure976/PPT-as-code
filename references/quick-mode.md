@@ -20,17 +20,21 @@ Only materialize them as files if the user asks for persisted output or the repo
 ## Workflow Contract
 
 1. Diagnose missing topic, audience, structure, and style inputs first.
-2. If the theme is vague, create a lightweight outline before implementation.
-3. If style is missing, recommend 3 to 4 directions and clearly recommend one.
-4. Continue with the recommended direction unless the user explicitly wants to choose.
-5. Keep the final route small:
+2. If the request starts from PDF, DOCX, EPUB, HTML, LaTeX, or web material, normalize that source into markdown before shaping the quick route.
+3. If the normalized source is still long-form, derive a compact source-to-scenes pass before shaping the quick outline.
+4. If `deck.md` is provided, treat it as a fast draft input and compile it into `deck_source.json` before building the quick route.
+5. If the theme is vague, create a lightweight outline before implementation.
+6. If style is missing, recommend 3 to 4 directions and clearly recommend one.
+7. Continue with the recommended direction unless the user explicitly wants to choose.
+8. Run a lightweight pre-HTML QA pass before finalizing the quick HTML route.
+9. Keep the final route small:
    - minimal slide structure
    - stage-like viewport
    - keyboard navigation
    - restrained transitions
-6. Do not require a full reference-image round-trip in `quick`.
-7. Do not default to a full image-download workflow unless the user explicitly asks for image help.
-8. If the user wants `pptx` or `both`, preserve clear slide roles and add export hints only after the static HTML route is settled.
+10. Do not require a full reference-image round-trip in `quick`.
+11. Do not default to a full image-download workflow unless the user explicitly asks for image help.
+12. If the user wants `pptx` or `both`, preserve clear slide roles and add export hints only after the static HTML route is settled.
 
 ## Minimum Technical Contract
 
@@ -64,3 +68,9 @@ Escalate to `basic` when the user wants:
 - HTML still comes first in `quick`.
 - If the final target includes PPTX, prepare `deck_manifest.json` after the slide structure is stable.
 - Mark visually dense or heavily composited pages as likely `raster` candidates instead of pretending they will stay editable.
+
+## DSL Consumption Rules
+
+- `deck.md` can directly seed the quick slide structure.
+- `deck_source.json` is the normalized input for quick HTML generation.
+- `quick` should not require a full breakdown round-trip just because the draft came from DSL.

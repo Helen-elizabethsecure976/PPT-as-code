@@ -24,22 +24,26 @@ Only materialize them as files if the user asks for persisted output or the repo
 ## Non-Negotiable Sequence
 
 1. Diagnose gaps and define the brief.
-2. Recommend 3 to 4 design directions.
-3. Wait for the user to choose one direction.
-4. If browsing is available, search for 3 real PPT or slide-design references.
-5. If browsing is unavailable, skip web reference search and derive the visual lock directly from the chosen style direction plus any user-provided inspiration.
-6. Convert the chosen reference or the fallback direction into structured design constraints.
-7. Read local writing-style notes when available.
-8. Prepare the deck-script artifact.
-9. Derive exactly 3 to 4 keywords for each image-bearing slide.
-10. Search and attempt image downloads when tools are available.
-11. If tools are unavailable, provide page-level search strings and image intent instead of pretending search happened.
-12. Record failed downloads with source links.
-13. Wait for the user to confirm the script and image plan.
-14. Generate static HTML.
-15. If the user wants `pptx` or `both`, prepare the manifest and export hints after the static deck is approved.
-16. Ask whether to add motion.
-17. Only after approval, add motion as a second pass.
+2. If the request starts from PDF, DOCX, EPUB, HTML, LaTeX, or web material, normalize that source into markdown before direction and script work begins.
+3. If the normalized source is still long-form, derive `source_scene_map.md` before direction lock and final scripting.
+4. If `deck.md` is provided, compile it into `deck_source.json` and treat it as a draft seed.
+5. Recommend 3 to 4 design directions.
+6. Wait for the user to choose one direction.
+7. If browsing is available, search for 3 real PPT or slide-design references.
+8. If browsing is unavailable, skip web reference search and derive the visual lock directly from the chosen style direction plus any user-provided inspiration.
+9. Convert the chosen reference or the fallback direction into structured design constraints.
+10. Read local writing-style notes when available.
+11. Prepare the deck-script artifact.
+12. Derive exactly 3 to 4 keywords for each image-bearing slide.
+13. Search and attempt image downloads when tools are available.
+14. If tools are unavailable, provide page-level search strings and image intent instead of pretending search happened.
+15. Record failed downloads with source links.
+16. Wait for the user to confirm the script and image plan.
+17. Run a lightweight pre-HTML QA pass and record it as `qa_report.md` when persistence is enabled.
+18. Generate static HTML.
+19. If the user wants `pptx` or `both`, prepare the manifest and export hints after the static deck is approved.
+20. Ask whether to add motion.
+21. Only after approval, add motion as a second pass.
 
 ## Hard Rules
 
@@ -101,3 +105,9 @@ If the user requests motion after the static pass:
 - PPTX export is downstream from the approved static deck.
 - Motion stays in HTML and should be ignored by the PPTX handoff.
 - Preserve `exportModeHint` so simple slides can stay editable and complex slides can fall back to raster.
+
+## DSL Consumption Rules
+
+- `deck.md` can seed the initial page structure and hints, but it must not replace advanced visual locking.
+- `deck_source.json` may carry image hints and `exportModeHint`, but those are advisory only until the advanced flow confirms them.
+- DSL input must not bypass reference selection, fallback design constraints, or static-first review.

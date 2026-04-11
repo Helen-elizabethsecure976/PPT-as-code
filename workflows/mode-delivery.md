@@ -16,6 +16,20 @@ If the user explicitly names a mode, respect it.
 
 If the request clearly says "start small and upgrade later", choose `quick` now and preserve the upgrade path.
 
+## Input Layer Rules
+
+- If the request starts from source documents or web pages, normalize that material into markdown before deck planning.
+- Use these adapters when available:
+  - PDF -> `pdf_to_md.py`
+  - DOCX / EPUB / HTML / LaTeX -> `doc_to_md.py`
+  - ordinary web pages -> `web_to_md.py`
+  - high-friction pages such as WeChat -> `web_to_md.cjs`
+- If the normalized source is still long-form, derive a scene map before the confirmed deck breakdown.
+- Default `input_mode` is `structured`.
+- Use `dsl` only when the user provides `deck.md` or explicitly asks to start from a deck draft file.
+- `dsl` changes the input layer, not the meaning of `quick`, `basic`, or `advanced`.
+- `dsl` must not bypass the confirmation sequence in `basic` or `advanced`.
+
 ## Output Matrix
 
 | Mode | Artifact Bias | Visual Bias | HTML Bias | PPTX Bias |
@@ -28,6 +42,8 @@ If the request clearly says "start small and upgrade later", choose `quick` now 
 
 - Do not migrate to a heavier stack just to get prettier components.
 - Do not skip the confirmation sequence in `basic` or `advanced`.
+- Do not skip the source-to-scenes pass when long-form source material is the real starting point.
+- Do not skip the lightweight pre-HTML QA pass in non-trivial runs.
 - Do not let `advanced` motion work start before the static deck is reviewed.
 - Do not start PPTX export before the static HTML structure is approved.
 - Do not force file writes when the user has not asked for persisted artifacts.

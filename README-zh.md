@@ -1,5 +1,7 @@
 # PPT as Code
 
+deck.md 说明：这份开源版现在支持一个 Slidev-inspired 的 `deck.md` 草稿输入层。它只是更顺手的起稿方式，不是 Slidev 兼容模式，也不会引入 Slidev runtime。
+
 PPTX 导出说明：这份开源版现在包含一条可选的 `PPTX export` 后处理路线。先锁定静态 HTML deck，再通过 `deck_manifest.json` 交给 companion skill 导出 `.pptx`。
 
 中文说明。英文版请看 [README.md](./README.md)。
@@ -12,6 +14,29 @@ PPTX 导出说明：这份开源版现在包含一条可选的 `PPTX export` 后
 - 再锁风格和脚本
 - 再处理图片和页面节奏
 - 最后再落成 HTML
+
+## 更新日志
+
+### 2026-04-11
+
+- 新增 Slidev-inspired 的 `deck.md` 草稿输入层，会先编译成 `deck_source.json` 再进入正常 deck 流程。
+- 新增 source normalization，支持 PDF、DOCX、EPUB、HTML、LaTeX、普通网页、微信页这类材料先转成 markdown。
+- 新增 `source-to-scenes` 预拆解，让长文或长材料先压成可能的 slide groups，再进入正式的主题拆解。
+- 新增 pre-HTML QA，在落静态 HTML 前检查页序、标题层级、page thesis、缺图和 fallback 链接。
+- 同步更新开源版文档，明确这些新增中间层和产物契约。
+
+### 2026-04-10
+
+- 去掉开源版对私有 workspace 结构的默认依赖，改成 conversation-first artifact 策略。
+- 增加无浏览、无下载时的正式 fallback，让 `advanced` 不会因为环境能力不足而卡住。
+- 把 runtime 规则和 maintainer 规则分开，稳定规则直接写进主 skill 文档。
+- 新增中英双语 README，方便公开发布和协作。
+
+### 2026-04-06
+
+- 把 PPTX 导出路线收敛成 screenshot-only workflow。
+- 删除可编辑混合导出、模板重建等过度承诺。
+- 明确 HTML 仍然是 source of truth，PPTX 是保真交付格式。
 
 ## 这个 Skill 的优点
 
@@ -139,6 +164,11 @@ ppt-as-code-open/
 |   |-- advanced-mode.md
 |   |-- visual-and-images.md
 |   |-- component-libraries.md
+|   |-- source-normalization.md
+|   |-- source-to-scenes.md
+|   |-- quality-checker.md
+|   |-- deck-dsl.md
+|   |-- deck-source-contract.md
 |   |-- pptx-export-handoff.md
 |   `-- evolution-log.md
 |-- companion-skills/

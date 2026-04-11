@@ -7,6 +7,21 @@ It is now paired with an optional PPTX-export handoff for teams that want PowerP
 
 ## Update Log
 
+### 2026-04-11
+
+- Added a Slidev-inspired `deck.md` draft route that compiles into `deck_source.json` before entering the normal deck workflow.
+- Added source-material normalization for PDF, DOCX, EPUB, HTML, LaTeX, ordinary web pages, and high-friction pages such as WeChat.
+- Added a `source-to-scenes` planning pass so long-form material can be compressed into likely slide groups before the confirmed breakdown.
+- Added a lightweight pre-HTML QA pass that checks page order, title hierarchy, page-thesis coverage, and missing image assets or fallback links.
+- Updated the open-source docs to explain the new upstream planning layers and artifact contracts.
+
+### 2026-04-10
+
+- Removed private workspace assumptions from the open version and made artifact persistence conversation-first by default.
+- Added explicit no-browsing and no-download fallbacks so `advanced` can continue without pretending web search or downloads happened.
+- Separated runtime guidance from maintainer guidance and kept stable rules in the main skill docs instead of in maintenance logs.
+- Added bilingual project documentation with a dedicated [README-zh.md](./README-zh.md).
+
 ### 2026-04-06
 
 - Simplified the PPTX export route to a screenshot-only workflow.
@@ -34,8 +49,12 @@ It removes private workspace assumptions, defaults to conversation-first artifac
 - Page-aware image workflow. Images are chosen from each slide's thesis, not from the deck topic as one giant vague prompt.
 - Safe file behavior. By default, artifacts stay in the conversation and only become files when the user wants persisted output or the repo clearly supports it.
 - Safe network behavior. If browsing or downloading is unavailable, the workflow falls back instead of pretending those actions happened.
+- Multi-source material ingestion. PDFs, docs, and web pages can be normalized into markdown before deck planning starts.
+- Source-to-scenes pre-decomposition. Long material can be compressed into likely slide groups before the confirmed breakdown.
 - Static-first delivery. In `advanced`, motion comes only after the static deck is reviewed.
+- Pre-HTML QA. A lightweight checker can catch page-order, title, thesis, and image gaps before implementation hardens them.
 - Optional PPTX delivery. HTML stays first, then a companion export skill can turn the approved deck into a screenshot-based `.pptx`.
+- Optional `deck.md` drafting. You can start from a Slidev-inspired draft file without turning the skill into a Slidev runtime.
 
 ## Feature Set
 
@@ -55,6 +74,10 @@ It also supports:
 - page-level keyword extraction for image search
 - manual-download fallback when image downloads fail
 - optional persisted artifacts such as `deck_brief.md`, `deck_script.md`, `image_plan.md`, and `index.html`
+- optional `deck.md` input and normalized `deck_source.json`
+- optional normalized markdown source from PDF, document, or web material
+- optional `source_scene_map.md` for long-form source decomposition
+- optional `qa_report.md` for pre-HTML checks
 - optional export targets: `html`, `pptx`, or `both`
 - a manifest handoff via `deck_manifest.json`
 
@@ -63,13 +86,18 @@ It also supports:
 At a high level, the skill follows a staged deck workflow:
 
 1. Ingest the topic, audience, context, and existing material.
-2. Diagnose what is missing, such as structure, style, references, script, or images.
-3. Route the request into `quick`, `basic`, or `advanced`.
-4. Produce staged artifacts before final HTML.
-5. Use explicit confirmation checkpoints for higher-risk decisions.
-6. Generate static HTML first.
-7. If needed, bridge the approved deck into `deck_manifest.json` for PPTX export.
-8. Add motion later only when the workflow and user approval justify it.
+2. If the input starts from PDF, DOCX, EPUB, HTML, LaTeX, or web material, normalize it into markdown first.
+3. If the material is still long-form, derive a scene map before the confirmed breakdown.
+4. Detect whether the input is normal structured input or a Slidev-inspired `deck.md` draft.
+5. If `deck.md` is present, compile it into `deck_source.json`.
+6. Diagnose what is missing, such as structure, style, references, script, or images.
+7. Route the request into `quick`, `basic`, or `advanced`.
+8. Produce staged artifacts before final HTML.
+9. Use explicit confirmation checkpoints for higher-risk decisions.
+10. Run a lightweight pre-HTML quality check.
+11. Generate static HTML first.
+12. If needed, bridge the approved deck into `deck_manifest.json` for PPTX export.
+13. Add motion later only when the workflow and user approval justify it.
 
 The core idea is simple:
 
@@ -107,6 +135,17 @@ If browsing is unavailable, the skill skips that branch and derives structured d
 - user-provided inspiration
 - the topic and audience
 
+### 3.5 Source material can be normalized first
+
+When the environment exposes the right adapters, the skill can normalize source material into markdown before deck planning:
+
+- PDF -> `pdf_to_md.py`
+- DOCX / EPUB / HTML / LaTeX -> `doc_to_md.py`
+- ordinary web pages -> `web_to_md.py`
+- high-friction pages such as WeChat -> `web_to_md.cjs`
+
+If those adapters are not available, the workflow can still continue with manual summarization and an explicit fallback note.
+
 ### 4. No hard dependency on image downloads
 
 If downloading is available, the skill may download chosen images into `assets/`.
@@ -129,6 +168,11 @@ ppt-as-code-open/
 |   |-- advanced-mode.md
 |   |-- visual-and-images.md
 |   |-- component-libraries.md
+|   |-- source-normalization.md
+|   |-- source-to-scenes.md
+|   |-- quality-checker.md
+|   |-- deck-dsl.md
+|   |-- deck-source-contract.md
 |   |-- pptx-export-handoff.md
 |   `-- evolution-log.md
 |-- companion-skills/
@@ -153,6 +197,47 @@ This package keeps HTML authoring and PPTX delivery separated on purpose.
 - Every slide is exported from a stable HTML render state as a screenshot.
 - PowerPoint is treated as a fidelity-first delivery container, not a native reconstruction target.
 - Motion stays HTML-only.
+
+## deck.md Draft Route
+
+This package now supports a Slidev-inspired draft input layer.
+
+- Use `deck.md` when you want to sketch a deck quickly.
+- The syntax is inspired by Slidev ergonomics, not Slidev compatibility.
+- `deck.md` is compiled into `deck_source.json`.
+- `deck_source.json` then feeds the normal `quick`, `basic`, or `advanced` workflow.
+- `deck.md` speeds up drafting, but it does not bypass confirmation gates.
+
+## Source Material Route
+
+This package can also start from source material that is not already deck-shaped.
+
+- Normalize documents or web pages into markdown first.
+- If the result is still long-form, derive a scene map before the confirmed breakdown.
+- Extract the deck thesis and likely scenes from that markdown.
+- Then feed the result into `quick`, `basic`, or `advanced`.
+
+Recommended adapter mapping:
+
+- PDF -> `pdf_to_md.py`
+- DOCX / EPUB / HTML / LaTeX -> `doc_to_md.py`
+- ordinary web pages -> `web_to_md.py`
+- high-friction pages such as WeChat -> `web_to_md.cjs`
+
+This is an upstream planning layer, not a rendering layer. HTML still remains the presentation output.
+
+## Lightweight QA Route
+
+Before static HTML is generated in non-trivial runs, this package can run a lightweight QA pass.
+
+The QA focuses on:
+
+- page sequence coherence
+- title hierarchy consistency
+- missing image assets or fallback links
+- whether each slide has a clear thesis
+
+This is intentionally small and fast. It is meant to catch common deck-structure misses before implementation hardens them.
 
 ## Mode Guide
 

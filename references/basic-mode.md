@@ -22,20 +22,24 @@ Only materialize them as files such as `deck_brief.md`, `theme_breakdown.md`, `s
 ## Non-Negotiable Sequence
 
 1. Diagnose missing inputs.
-2. Recommend 3 to 4 design directions.
-3. Prepare the theme-breakdown artifact.
-4. Wait for user confirmation of the breakdown.
-5. Lock one style direction.
-6. Read local writing-style notes when available.
-7. Prepare the deck-script artifact.
-8. Wait for user confirmation of the script.
-9. Derive exactly 1 to 2 keywords for each image-bearing slide.
-10. Search and attempt image downloads when tools are available.
-11. If tools are unavailable, provide page-level search strings and image intent instead of pretending search happened.
-12. Record failed downloads with source links.
-13. Wait for user confirmation of the script plus image plan.
-14. Generate static HTML.
-15. If the user wants `pptx` or `both`, prepare the manifest and export hints after the static deck is accepted.
+2. If the request starts from PDF, DOCX, EPUB, HTML, LaTeX, or web material, normalize that source into markdown before breakdown work begins.
+3. If the normalized source is still long-form, derive `source_scene_map.md` before writing the confirmed breakdown.
+4. If `deck.md` is provided, compile it into `deck_source.json` and treat it as a draft seed.
+5. Recommend 3 to 4 design directions.
+6. Prepare the theme-breakdown artifact.
+7. Wait for user confirmation of the breakdown.
+8. Lock one style direction.
+9. Read local writing-style notes when available.
+10. Prepare the deck-script artifact.
+11. Wait for user confirmation of the script.
+12. Derive exactly 1 to 2 keywords for each image-bearing slide.
+13. Search and attempt image downloads when tools are available.
+14. If tools are unavailable, provide page-level search strings and image intent instead of pretending search happened.
+15. Record failed downloads with source links.
+16. Wait for user confirmation of the script plus image plan.
+17. Run a lightweight pre-HTML QA pass and record it as `qa_report.md` when persistence is enabled.
+18. Generate static HTML.
+19. If the user wants `pptx` or `both`, prepare the manifest and export hints after the static deck is accepted.
 
 ## Blocking Rules
 
@@ -43,6 +47,7 @@ Only materialize them as files such as `deck_brief.md`, `theme_breakdown.md`, `s
 - Do not start keyword extraction or image search before the deck script is confirmed.
 - Do not generate final static HTML before the script and image plan are both confirmed.
 - Each blocking step should follow a real artifact, whether inline or persisted.
+- `deck.md` must not bypass the breakdown or script confirmation gates.
 
 ## Style Pack Requirements
 
@@ -86,6 +91,12 @@ The image-plan artifact should record:
 - Do not start PPTX export before the confirmed static HTML pass.
 - When PPTX is requested, prepare `deck_manifest.json` from the approved deck script, image plan, and final slide structure.
 - Keep simple slides editable when possible and mark dense, highly layered slides as `raster`.
+
+## DSL Consumption Rules
+
+- `deck.md` is input convenience, not final spec.
+- `deck_source.json` should seed the brief and breakdown, not replace them.
+- Page titles, notes, image hints, and keywords from DSL may speed up planning, but the confirmed artifacts remain authoritative.
 
 ## When To Escalate To Advanced
 

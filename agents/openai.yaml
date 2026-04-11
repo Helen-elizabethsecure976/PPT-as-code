@@ -1,4 +1,4 @@
 interface:
   display_name: "PPT as Code"
-  short_description: "Build creator-first HTML presentations with safe fallbacks and optional PPTX export handoff"
-  default_prompt: "Use $ppt-as-code to plan or build an HTML-based presentation with staged artifacts, confirmed visual decisions, graceful fallbacks when file persistence or web search is unavailable, and an optional PPTX export handoff after the static deck is ready."
+  short_description: "Build creator-first HTML presentations with source-material normalization, optional deck.md drafting, and PPTX handoff"
+  default_prompt: "Use $ppt-as-code to plan or build an HTML-based presentation with staged artifacts, optional source-material normalization from documents or web pages, optional Slidev-inspired deck.md drafting, confirmed visual decisions, graceful fallbacks when file persistence or web search is unavailable, and an optional PPTX export handoff after the static deck is ready."
