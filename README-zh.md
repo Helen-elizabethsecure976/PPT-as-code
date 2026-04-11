@@ -23,6 +23,7 @@ PPTX 导出说明：这份开源版现在包含一条可选的 `PPTX export` 后
 - 新增 source normalization，支持 PDF、DOCX、EPUB、HTML、LaTeX、普通网页、微信页这类材料先转成 markdown。
 - 新增 `source-to-scenes` 预拆解，让长文或长材料先压成可能的 slide groups，再进入正式的主题拆解。
 - 新增 pre-HTML QA，在落静态 HTML 前检查页序、标题层级、page thesis、缺图和 fallback 链接。
+- 新增 reference search pack，把 Behance、Dribbble、SlideShare、Pitch 以及中文 PPT 网站整理成可复用搜索集。
 - 同步更新开源版文档，明确这些新增中间层和产物契约。
 
 ### 2026-04-10
@@ -46,6 +47,7 @@ PPTX 导出说明：这份开源版现在包含一条可选的 `PPTX export` 后
 - 搜图是按每一页的核心判断来做，不是按整套 deck 大主题瞎搜。
 - 没有网络、不能下载图片、不能写文件时，也不会直接卡死。
 - `advanced` 先出静态版，再决定要不要补动态，节奏更稳。
+- 现在还内置了一个“参考图搜索集”，把高信号英文站和中文 PPT 站分层整理好了。
 
 ## 核心特性
 
@@ -163,6 +165,7 @@ ppt-as-code-open/
 |   |-- basic-mode.md
 |   |-- advanced-mode.md
 |   |-- visual-and-images.md
+|   |-- reference-search-pack.md
 |   |-- component-libraries.md
 |   |-- source-normalization.md
 |   |-- source-to-scenes.md
@@ -273,6 +276,32 @@ ppt-as-code-open/
 - 保留图片链接或搜索字符串
 - 标记为需要手动下载
 - 不让整个流程卡住
+
+## 参考图搜索集
+
+这份开源版现在内置了一个参考图搜索集，用来减少“随便搜图、结果很飘”的问题。
+
+英文高信号来源：
+
+- Behance
+- Dribbble
+- SlideShare
+- Pitch
+
+中文来源：
+
+- 优品PPT
+- OfficePLUS
+- 稻壳儿 / Docer
+- 51PPT模板网
+- 站酷
+- iSlide
+
+它们的职责不完全一样：
+
+- Behance / Dribbble 更适合锁视觉方向
+- SlideShare / Pitch 更适合看真实 deck 节奏
+- 中文 PPT 站更适合补中文办公场景、汇报场景和本地视觉语境
 
 ## 示例 Prompt
 

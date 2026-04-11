@@ -33,9 +33,14 @@ Use those dimensions for arrows, progress bars, counters, or slide navigation el
 When the chosen mode supports browsing:
 
 1. Let the user choose a direction first.
-2. Then search for 3 real PPT or slide-design references that match it.
-3. Do not lock the final visual direction before that choice is made.
-4. After the user chooses one reference, translate it into structured design constraints before HTML work begins.
+2. Read `reference-search-pack.md` and use the curated source set instead of random image search.
+3. Then search for 3 real PPT or slide-design references that match it.
+4. Prefer source selection in this order:
+   - Behance / Dribbble for visual direction
+   - SlideShare / Pitch for deck pacing and real structure
+   - Chinese PPT sources when local office, education, or Chinese visual language matters
+5. Do not lock the final visual direction before that choice is made.
+6. After the user chooses one reference, translate it into structured design constraints before HTML work begins.
 
 When browsing is unavailable:
 
@@ -52,8 +57,9 @@ For every image-bearing slide:
 1. compress the slide into one thesis
 2. derive page-level keywords
 3. search using those keywords plus the chosen style direction when search is available
-4. if search is unavailable, generate page-level search strings and image intent instead
-5. score the result by page fit, style fit, and presentation fit
+4. if search is available, prefer the curated search pack over random search-engine drift
+5. if search is unavailable, generate page-level search strings and image intent instead
+6. score the result by page fit, style fit, and presentation fit
 
 Keyword count by mode:
 

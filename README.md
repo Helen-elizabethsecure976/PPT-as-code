@@ -13,6 +13,7 @@ It is now paired with an optional PPTX-export handoff for teams that want PowerP
 - Added source-material normalization for PDF, DOCX, EPUB, HTML, LaTeX, ordinary web pages, and high-friction pages such as WeChat.
 - Added a `source-to-scenes` planning pass so long-form material can be compressed into likely slide groups before the confirmed breakdown.
 - Added a lightweight pre-HTML QA pass that checks page order, title hierarchy, page-thesis coverage, and missing image assets or fallback links.
+- Added a curated reference-search pack that combines high-signal global presentation sites and Chinese PPT ecosystems.
 - Updated the open-source docs to explain the new upstream planning layers and artifact contracts.
 
 ### 2026-04-10
@@ -53,6 +54,7 @@ It removes private workspace assumptions, defaults to conversation-first artifac
 - Source-to-scenes pre-decomposition. Long material can be compressed into likely slide groups before the confirmed breakdown.
 - Static-first delivery. In `advanced`, motion comes only after the static deck is reviewed.
 - Pre-HTML QA. A lightweight checker can catch page-order, title, thesis, and image gaps before implementation hardens them.
+- Curated reference-search pack. The skill now has a reusable source set for global slide inspiration and Chinese PPT ecosystems.
 - Optional PPTX delivery. HTML stays first, then a companion export skill can turn the approved deck into a screenshot-based `.pptx`.
 - Optional `deck.md` drafting. You can start from a Slidev-inspired draft file without turning the skill into a Slidev runtime.
 
@@ -78,6 +80,7 @@ It also supports:
 - optional normalized markdown source from PDF, document, or web material
 - optional `source_scene_map.md` for long-form source decomposition
 - optional `qa_report.md` for pre-HTML checks
+- optional `reference-search-pack.md` for curated reference discovery
 - optional export targets: `html`, `pptx`, or `both`
 - a manifest handoff via `deck_manifest.json`
 
@@ -167,6 +170,7 @@ ppt-as-code-open/
 |   |-- basic-mode.md
 |   |-- advanced-mode.md
 |   |-- visual-and-images.md
+|   |-- reference-search-pack.md
 |   |-- component-libraries.md
 |   |-- source-normalization.md
 |   |-- source-to-scenes.md
@@ -225,6 +229,28 @@ Recommended adapter mapping:
 - high-friction pages such as WeChat -> `web_to_md.cjs`
 
 This is an upstream planning layer, not a rendering layer. HTML still remains the presentation output.
+
+## Reference Search Pack
+
+This package now includes a curated source pack for reference locking.
+
+Global sources:
+
+- Behance
+- Dribbble
+- SlideShare
+- Pitch
+
+Chinese sources:
+
+- 优品PPT
+- OfficePLUS
+- Docer
+- 51PPT模板网
+- 站酷
+- iSlide
+
+The pack is meant to reduce random search drift and give the workflow a more repeatable reference-selection path.
 
 ## Lightweight QA Route
 

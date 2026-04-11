@@ -149,6 +149,7 @@ This skill operates as a single inline agent - no role switching required.
 | basic mode workflow | `${SKILL_DIR}/references/basic-mode.md` | required only when mode = `basic` |
 | advanced mode workflow | `${SKILL_DIR}/references/advanced-mode.md` | required only when mode = `advanced` |
 | visual and image workflow | `${SKILL_DIR}/references/visual-and-images.md` | required when style, references, or images are in scope |
+| reference search pack | `${SKILL_DIR}/references/reference-search-pack.md` | required when browsing is used for reference locking or image/source discovery |
 | component library guidance | `${SKILL_DIR}/references/component-libraries.md` | required only when the route needs libraries |
 | PPTX export handoff | `${SKILL_DIR}/references/pptx-export-handoff.md` | required only when export target = `pptx` or `both` |
 | source normalization guide | `${SKILL_DIR}/references/source-normalization.md` | required only when the input starts from PDF, DOCX, EPUB, HTML, LaTeX, or web pages |
@@ -314,12 +315,13 @@ This skill operates as a single inline agent - no role switching required.
    - `basic` -> `${SKILL_DIR}/references/basic-mode.md`
    - `advanced` -> `${SKILL_DIR}/references/advanced-mode.md`
 2. Load `${SKILL_DIR}/references/visual-and-images.md` when style, references, or images are relevant.
-3. Load `${SKILL_DIR}/references/component-libraries.md` only when the route truly needs component or chart libraries.
-4. Load `${SKILL_DIR}/references/source-normalization.md` only when the source input needs normalization from document or web material.
-5. Load `${SKILL_DIR}/references/source-to-scenes.md` only when long source material needs pre-breakdown scene mapping.
-6. Load `${SKILL_DIR}/references/quality-checker.md` before static HTML generation in non-trivial runs.
-7. Load `${SKILL_DIR}/references/pptx-export-handoff.md` only when the export target is `pptx` or `both`.
-8. Load `${SKILL_DIR}/references/deck-dsl.md` and `${SKILL_DIR}/references/deck-source-contract.md` only when the input mode is `dsl`.
+3. Load `${SKILL_DIR}/references/reference-search-pack.md` when browsing will be used for reference locking or image/source discovery.
+4. Load `${SKILL_DIR}/references/component-libraries.md` only when the route truly needs component or chart libraries.
+5. Load `${SKILL_DIR}/references/source-normalization.md` only when the source input needs normalization from document or web material.
+6. Load `${SKILL_DIR}/references/source-to-scenes.md` only when long source material needs pre-breakdown scene mapping.
+7. Load `${SKILL_DIR}/references/quality-checker.md` before static HTML generation in non-trivial runs.
+8. Load `${SKILL_DIR}/references/pptx-export-handoff.md` only when the export target is `pptx` or `both`.
+9. Load `${SKILL_DIR}/references/deck-dsl.md` and `${SKILL_DIR}/references/deck-source-contract.md` only when the input mode is `dsl`.
 
 `CHECKPOINT`:
 

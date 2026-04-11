@@ -29,7 +29,7 @@ Only materialize them as files if the user asks for persisted output or the repo
 4. If `deck.md` is provided, compile it into `deck_source.json` and treat it as a draft seed.
 5. Recommend 3 to 4 design directions.
 6. Wait for the user to choose one direction.
-7. If browsing is available, search for 3 real PPT or slide-design references.
+7. If browsing is available, read `reference-search-pack.md` and search from the curated source set for 3 real PPT or slide-design references.
 8. If browsing is unavailable, skip web reference search and derive the visual lock directly from the chosen style direction plus any user-provided inspiration.
 9. Convert the chosen reference or the fallback direction into structured design constraints.
 10. Read local writing-style notes when available.
