@@ -34,9 +34,9 @@ If the request clearly says "start small and upgrade later", choose `quick` now 
 
 | Mode | Artifact Bias | Visual Bias | HTML Bias | PPTX Bias |
 |------|---------------|-------------|-----------|-----------|
-| `quick` | lightweight outline or brief, usually inline | 3 to 4 directions if needed, one recommended default | minimal stage-like deck route | optional manifest after HTML |
-| `basic` | confirmed breakdown, confirmed script, confirmed image plan | creator-first style pack with page furniture options | static HTML only after confirmations | optional PPTX handoff only after static deck approval |
-| `advanced` | direction choice, reference branch or fallback, structured constraints, static-first then optional motion | reference-driven when browsing is available, style-synthesis fallback otherwise | static HTML first, motion only after approval | optional PPTX handoff from the approved static deck |
+| `quick` | lightweight outline or brief, usually inline | 3 to 4 directions if needed, one recommended default | minimal stage-like deck route, no full visualization layer | optional manifest after HTML |
+| `basic` | confirmed breakdown, confirmed script, confirmed visual plan, confirmed image plan | creator-first style pack with page furniture options | static HTML only after confirmations | optional PPTX handoff only after static deck approval |
+| `advanced` | direction choice, reference branch or fallback, structured constraints, confirmed visual plan, static-first then optional motion | reference-driven when browsing is available, style-synthesis fallback otherwise | static HTML first, motion only after approval | optional PPTX handoff from the approved static deck |
 
 ## Guardrails
 
@@ -44,6 +44,7 @@ If the request clearly says "start small and upgrade later", choose `quick` now 
 - Do not skip the confirmation sequence in `basic` or `advanced`.
 - Do not skip the source-to-scenes pass when long-form source material is the real starting point.
 - Do not skip the lightweight pre-HTML QA pass in non-trivial runs.
+- Do not use the full chart or diagram planning layer in `quick`.
 - Do not let `advanced` motion work start before the static deck is reviewed.
 - Do not start PPTX export before the static HTML structure is approved.
 - Do not force file writes when the user has not asked for persisted artifacts.

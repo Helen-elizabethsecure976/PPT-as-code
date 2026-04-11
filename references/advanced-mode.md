@@ -13,6 +13,7 @@ Return a staged build with these artifacts:
 - chosen reference set or style-direction fallback
 - structured design constraints
 - deck script
+- visual plan
 - image plan
 - static HTML
 - optional `deck_manifest.json` and PPTX handoff when the user asks for `pptx` or `both`
@@ -34,16 +35,20 @@ Only materialize them as files if the user asks for persisted output or the repo
 9. Convert the chosen reference or the fallback direction into structured design constraints.
 10. Read local writing-style notes when available.
 11. Prepare the deck-script artifact.
-12. Derive exactly 3 to 4 keywords for each image-bearing slide.
-13. Search and attempt image downloads when tools are available.
-14. If tools are unavailable, provide page-level search strings and image intent instead of pretending search happened.
-15. Record failed downloads with source links.
-16. Wait for the user to confirm the script and image plan.
-17. Run a lightweight pre-HTML QA pass and record it as `qa_report.md` when persistence is enabled.
-18. Generate static HTML.
-19. If the user wants `pptx` or `both`, prepare the manifest and export hints after the static deck is approved.
-20. Ask whether to add motion.
-21. Only after approval, add motion as a second pass.
+12. Wait for the user to confirm the script.
+13. Prepare `visual_plan.md`.
+14. Decide page by page whether the slide is text-led, image-led, chart-led, diagram-led, or card-led.
+15. Record engine, placement, chart or diagram type, content source, style constraints, and fallback mode for each visualized slide.
+16. Derive exactly 3 to 4 keywords for each image-bearing slide.
+17. Search and attempt image downloads when tools are available.
+18. If tools are unavailable, provide page-level search strings and image intent instead of pretending search happened.
+19. Record failed downloads with source links.
+20. Wait for the user to confirm the script, visual plan, and image plan.
+21. Run a lightweight pre-HTML QA pass and record it as `qa_report.md` when persistence is enabled.
+22. Generate static HTML.
+23. If the user wants `pptx` or `both`, prepare the manifest and export hints after the static deck is approved.
+24. Ask whether to add motion.
+25. Only after approval, add motion as a second pass.
 
 ## Hard Rules
 
@@ -89,6 +94,20 @@ The image-plan artifact should record:
 - selected image
 - download status
 - fallback link when the download failed
+
+## Visualization Plan Requirements
+
+`visual_plan.md` should record:
+
+- slide number
+- page thesis
+- visual role
+- chosen engine
+- placement
+- chart or diagram type
+- content source
+- style constraints
+- fallback mode
 
 ## Motion Pass Rules
 

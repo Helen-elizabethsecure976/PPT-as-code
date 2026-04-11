@@ -24,6 +24,8 @@ PPTX 导出说明：这份开源版现在包含一条可选的 `PPTX export` 后
 - 新增 `source-to-scenes` 预拆解，让长文或长材料先压成可能的 slide groups，再进入正式的主题拆解。
 - 新增 pre-HTML QA，在落静态 HTML 前检查页序、标题层级、page thesis、缺图和 fallback 链接。
 - 新增 reference search pack，把 Behance、Dribbble、SlideShare、Pitch 以及中文 PPT 网站整理成可复用搜索集。
+- 新增 visualization layer，让 `basic` 和 `advanced` 可以提前规划图表、流程图、信息图和 KPI 卡。
+- 明确 `quick` 不做图表层，保持快速起稿路线的轻量和稳定。
 - 同步更新开源版文档，明确这些新增中间层和产物契约。
 
 ### 2026-04-10
@@ -48,6 +50,7 @@ PPTX 导出说明：这份开源版现在包含一条可选的 `PPTX export` 后
 - 没有网络、不能下载图片、不能写文件时，也不会直接卡死。
 - `advanced` 先出静态版，再决定要不要补动态，节奏更稳。
 - 现在还内置了一个“参考图搜索集”，把高信号英文站和中文 PPT 站分层整理好了。
+- `basic` 和 `advanced` 还能提前规划图表和图形表达，而且这些图表会继承整套 deck 的风格。
 
 ## 核心特性
 
@@ -165,6 +168,8 @@ ppt-as-code-open/
 |   |-- basic-mode.md
 |   |-- advanced-mode.md
 |   |-- visual-and-images.md
+|   |-- visualization-layer.md
+|   |-- visualization-engines.md
 |   |-- reference-search-pack.md
 |   |-- component-libraries.md
 |   |-- source-normalization.md
@@ -302,6 +307,27 @@ ppt-as-code-open/
 - Behance / Dribbble 更适合锁视觉方向
 - SlideShare / Pitch 更适合看真实 deck 节奏
 - 中文 PPT 站更适合补中文办公场景、汇报场景和本地视觉语境
+
+## 图表与图形层
+
+这份开源版现在把图表和图形表达也接进了正式工作流，但只在 `basic` 和 `advanced` 中启用。
+
+- `quick` 不做图表层，避免把快速版拖重。
+- `basic` 和 `advanced` 会先产出 `visual_plan.md`，再进入最终 HTML。
+- 每一页会先判断它到底更适合：
+  - `text-led`
+  - `image-led`
+  - `chart-led`
+  - `diagram-led`
+  - `card-led`
+- 当前第一批接入的图形引擎是：
+  - `vega`
+  - `infographic`
+  - `infocard`
+  - `mermaid`
+  - `architecture`
+- 图表放置位置也会提前规划，而不是到 HTML 阶段临时塞。
+- 所有图表和图形都必须继承 deck 的设计风格，而不是各自长成另一套系统。
 
 ## 示例 Prompt
 

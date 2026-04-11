@@ -14,6 +14,8 @@ It is now paired with an optional PPTX-export handoff for teams that want PowerP
 - Added a `source-to-scenes` planning pass so long-form material can be compressed into likely slide groups before the confirmed breakdown.
 - Added a lightweight pre-HTML QA pass that checks page order, title hierarchy, page-thesis coverage, and missing image assets or fallback links.
 - Added a curated reference-search pack that combines high-signal global presentation sites and Chinese PPT ecosystems.
+- Added a visualization layer for `basic` and `advanced`, with `visual_plan.md`, engine selection, placement planning, and style inheritance for charts and diagrams.
+- Kept `quick` intentionally chart-free so the fast route stays lightweight.
 - Updated the open-source docs to explain the new upstream planning layers and artifact contracts.
 
 ### 2026-04-10
@@ -55,6 +57,7 @@ It removes private workspace assumptions, defaults to conversation-first artifac
 - Static-first delivery. In `advanced`, motion comes only after the static deck is reviewed.
 - Pre-HTML QA. A lightweight checker can catch page-order, title, thesis, and image gaps before implementation hardens them.
 - Curated reference-search pack. The skill now has a reusable source set for global slide inspiration and Chinese PPT ecosystems.
+- Visualization layer. `basic` and `advanced` can plan charts, diagrams, infographics, and KPI cards before HTML implementation starts.
 - Optional PPTX delivery. HTML stays first, then a companion export skill can turn the approved deck into a screenshot-based `.pptx`.
 - Optional `deck.md` drafting. You can start from a Slidev-inspired draft file without turning the skill into a Slidev runtime.
 
@@ -76,6 +79,7 @@ It also supports:
 - page-level keyword extraction for image search
 - manual-download fallback when image downloads fail
 - optional persisted artifacts such as `deck_brief.md`, `deck_script.md`, `image_plan.md`, and `index.html`
+- optional `visual_plan.md` for chart and diagram planning
 - optional `deck.md` input and normalized `deck_source.json`
 - optional normalized markdown source from PDF, document, or web material
 - optional `source_scene_map.md` for long-form source decomposition
@@ -96,11 +100,12 @@ At a high level, the skill follows a staged deck workflow:
 6. Diagnose what is missing, such as structure, style, references, script, or images.
 7. Route the request into `quick`, `basic`, or `advanced`.
 8. Produce staged artifacts before final HTML.
-9. Use explicit confirmation checkpoints for higher-risk decisions.
-10. Run a lightweight pre-HTML quality check.
-11. Generate static HTML first.
-12. If needed, bridge the approved deck into `deck_manifest.json` for PPTX export.
-13. Add motion later only when the workflow and user approval justify it.
+9. Plan charts, diagrams, infographics, or KPI cards in `basic` and `advanced` when they improve page clarity.
+10. Use explicit confirmation checkpoints for higher-risk decisions.
+11. Run a lightweight pre-HTML quality check.
+12. Generate static HTML first.
+13. If needed, bridge the approved deck into `deck_manifest.json` for PPTX export.
+14. Add motion later only when the workflow and user approval justify it.
 
 The core idea is simple:
 
@@ -170,6 +175,8 @@ ppt-as-code-open/
 |   |-- basic-mode.md
 |   |-- advanced-mode.md
 |   |-- visual-and-images.md
+|   |-- visualization-layer.md
+|   |-- visualization-engines.md
 |   |-- reference-search-pack.md
 |   |-- component-libraries.md
 |   |-- source-normalization.md
@@ -211,6 +218,22 @@ This package now supports a Slidev-inspired draft input layer.
 - `deck.md` is compiled into `deck_source.json`.
 - `deck_source.json` then feeds the normal `quick`, `basic`, or `advanced` workflow.
 - `deck.md` speeds up drafting, but it does not bypass confirmation gates.
+
+## Visualization Route
+
+This package can also plan visualizations as part of the deck structure.
+
+- `quick` stays chart-free on purpose.
+- `basic` and `advanced` can create `visual_plan.md` before final HTML.
+- Visuals are selected page by page as `text-led`, `image-led`, `chart-led`, `diagram-led`, or `card-led`.
+- Current first-wave engines are:
+  - `vega`
+  - `infographic`
+  - `infocard`
+  - `mermaid`
+  - `architecture`
+- Visualization placement is planned early rather than improvised during HTML implementation.
+- All visualizations must inherit the deck's design constraints.
 
 ## Source Material Route
 

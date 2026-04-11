@@ -34,7 +34,8 @@ Only materialize them as files if the user asks for persisted output or the repo
    - restrained transitions
 10. Do not require a full reference-image round-trip in `quick`.
 11. Do not default to a full image-download workflow unless the user explicitly asks for image help.
-12. If the user wants `pptx` or `both`, preserve clear slide roles and add export hints only after the static HTML route is settled.
+12. Do not use the full visualization layer in `quick`. If the deck needs charts, diagrams, infographics, or KPI cards, upgrade to `basic` or `advanced`.
+13. If the user wants `pptx` or `both`, preserve clear slide roles and add export hints only after the static HTML route is settled.
 
 ## Minimum Technical Contract
 
@@ -53,6 +54,7 @@ Even in `quick`, keep these:
 - Do not return a bare HTML skeleton without style direction.
 - Prefer one clear mood and one strong cover idea over scattered embellishments.
 - If the deck needs a progress signal, keep it lightweight and obvious.
+- Do not let `quick` turn into a chart-planning workflow.
 
 ## Upgrade Path
 

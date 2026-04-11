@@ -4,16 +4,16 @@ description: >
   Build HTML-based web presentations with a creator-first workflow: keep quick mode lightweight,
   use basic mode for confirmed deck planning plus script plus image flow, and use advanced mode
   for reference-driven decks, static-first delivery, optional motion follow-up, optional PPTX
-  export handoff, optional source-material normalization, and safe fallbacks when file persistence
-  or web search is unavailable. Also supports an optional Slidev-inspired `deck.md` draft input
-  layer.
+  export handoff, optional source-material normalization, visualization planning for charts and
+  diagrams, and safe fallbacks when file persistence or web search is unavailable. Also supports
+  an optional Slidev-inspired `deck.md` draft input layer.
 ---
 
 # PPT as Code
 
 > Plan and build HTML-based presentations with a creator-first staged workflow.
 
-**Core Pipeline**: `Ingest -> Normalize Source Material When Needed -> Derive Source Scenes When Needed -> Detect Input Mode -> If DSL: Parse deck.md -> Compile deck_source.json -> Route Mode -> Load References -> Diagnose Gaps -> Produce Artifacts -> Confirm Key Decisions -> Run Pre-HTML QA -> Deliver HTML -> Optional PPTX Export`
+**Core Pipeline**: `Ingest -> Normalize Source Material When Needed -> Derive Source Scenes When Needed -> Detect Input Mode -> If DSL: Parse deck.md -> Compile deck_source.json -> Route Mode -> Load References -> Diagnose Gaps -> Produce Artifacts -> Confirm Key Decisions -> Plan Visualizations -> Plan Images -> Run Pre-HTML QA -> Deliver HTML -> Optional PPTX Export`
 
 ---
 
@@ -100,6 +100,24 @@ description: >
 > - Once a reference is chosen, or the workflow has explicitly fallen back to style-word synthesis, translate the direction into structured design constraints before final implementation.
 
 > [!IMPORTANT]
+> ### Visualization Planning Rules
+>
+> - Charts, diagrams, infographics, and KPI cards are part of the deck structure, not late implementation garnish.
+> - After the script is confirmed, decide page by page whether the page should be text-led, image-led, chart-led, diagram-led, or card-led.
+> - Record those decisions in `visual_plan.md` before final HTML work begins.
+> - Visualization choice must follow page thesis, not novelty. If a chart or diagram does not make the page clearer, do not force one.
+> - Visualization placement must also be decided early: `full-width`, `left`, `right`, `top-band`, `bottom-band`, `center-focus`, or `split-2col`.
+> - `quick` is intentionally excluded from the full visualization layer. Do not add chart-led, diagram-led, or card-led pages in `quick` unless the skill is explicitly upgraded to `basic` or `advanced`.
+
+> [!IMPORTANT]
+> ### Visualization Style Inheritance
+>
+> - Every chart or diagram must inherit the deck's design constraints.
+> - Use the deck's typography, color logic, spacing rhythm, and emphasis language rather than introducing a separate visual system for charts.
+> - Chart containers, labels, gridlines, fills, outlines, and cards must feel native to the deck, not like embedded third-party widgets.
+> - When visual tokens are needed, derive them from the active design constraints instead of inventing them ad hoc.
+
+> [!IMPORTANT]
 > ### Image Workflow Rules
 >
 > - Image quality beats image quantity. A weak image is worse than no image.
@@ -149,6 +167,8 @@ This skill operates as a single inline agent - no role switching required.
 | basic mode workflow | `${SKILL_DIR}/references/basic-mode.md` | required only when mode = `basic` |
 | advanced mode workflow | `${SKILL_DIR}/references/advanced-mode.md` | required only when mode = `advanced` |
 | visual and image workflow | `${SKILL_DIR}/references/visual-and-images.md` | required when style, references, or images are in scope |
+| visualization layer guide | `${SKILL_DIR}/references/visualization-layer.md` | required when charts, diagrams, infographics, or KPI cards are in scope |
+| visualization engines guide | `${SKILL_DIR}/references/visualization-engines.md` | required when selecting chart or diagram engines |
 | reference search pack | `${SKILL_DIR}/references/reference-search-pack.md` | required when browsing is used for reference locking or image/source discovery |
 | component library guidance | `${SKILL_DIR}/references/component-libraries.md` | required only when the route needs libraries |
 | PPTX export handoff | `${SKILL_DIR}/references/pptx-export-handoff.md` | required only when export target = `pptx` or `both` |
@@ -204,6 +224,7 @@ This skill operates as a single inline agent - no role switching required.
    - `theme_breakdown.md`
    - `style_options.md`
    - `deck_script.md`
+   - `visual_plan.md`
    - `image_plan.md`
    - `index.html`
    - `assets/`
@@ -315,13 +336,14 @@ This skill operates as a single inline agent - no role switching required.
    - `basic` -> `${SKILL_DIR}/references/basic-mode.md`
    - `advanced` -> `${SKILL_DIR}/references/advanced-mode.md`
 2. Load `${SKILL_DIR}/references/visual-and-images.md` when style, references, or images are relevant.
-3. Load `${SKILL_DIR}/references/reference-search-pack.md` when browsing will be used for reference locking or image/source discovery.
-4. Load `${SKILL_DIR}/references/component-libraries.md` only when the route truly needs component or chart libraries.
-5. Load `${SKILL_DIR}/references/source-normalization.md` only when the source input needs normalization from document or web material.
-6. Load `${SKILL_DIR}/references/source-to-scenes.md` only when long source material needs pre-breakdown scene mapping.
-7. Load `${SKILL_DIR}/references/quality-checker.md` before static HTML generation in non-trivial runs.
-8. Load `${SKILL_DIR}/references/pptx-export-handoff.md` only when the export target is `pptx` or `both`.
-9. Load `${SKILL_DIR}/references/deck-dsl.md` and `${SKILL_DIR}/references/deck-source-contract.md` only when the input mode is `dsl`.
+3. Load `${SKILL_DIR}/references/visualization-layer.md` and `${SKILL_DIR}/references/visualization-engines.md` when charts, diagrams, infographics, or KPI cards may appear.
+4. Load `${SKILL_DIR}/references/reference-search-pack.md` when browsing will be used for reference locking or image/source discovery.
+5. Load `${SKILL_DIR}/references/component-libraries.md` only when the route truly needs component or chart libraries.
+6. Load `${SKILL_DIR}/references/source-normalization.md` only when the source input needs normalization from document or web material.
+7. Load `${SKILL_DIR}/references/source-to-scenes.md` only when long source material needs pre-breakdown scene mapping.
+8. Load `${SKILL_DIR}/references/quality-checker.md` before static HTML generation in non-trivial runs.
+9. Load `${SKILL_DIR}/references/pptx-export-handoff.md` only when the export target is `pptx` or `both`.
+10. Load `${SKILL_DIR}/references/deck-dsl.md` and `${SKILL_DIR}/references/deck-source-contract.md` only when the input mode is `dsl`.
 
 `CHECKPOINT`:
 
@@ -346,7 +368,7 @@ This skill operates as a single inline agent - no role switching required.
    - Otherwise, keep it inline in the conversation.
 3. Decide which artifacts are required now versus later:
    - `quick`: brief or outline, style directions, minimal HTML route
-   - `basic`: brief, breakdown, style options, script, image plan, HTML
+   - `basic`: brief, breakdown, style options, script, visual plan, image plan, HTML
    - `advanced`: same as `basic`, plus structured design constraints and optional motion follow-up
    - long source input: add `source_scene_map.md` before the confirmed breakdown
    - `dsl`: add `deck_source.json` as the normalized draft input artifact
@@ -386,8 +408,9 @@ This skill operates as a single inline agent - no role switching required.
    - one cover direction
    - a minimum viable HTML route or short prompt pack
 8. If the user asked for images in `quick`, use the page-thesis keyword workflow from `visual-and-images.md`, but keep the image plan lightweight.
-9. If the user wants `pptx` or `both`, keep the slide roles clear enough to support a later manifest handoff.
-10. Include an upgrade path toward `basic`.
+9. Do not add the visualization layer in `quick`. If the deck needs charts, diagrams, infographics, or KPI cards, upgrade to `basic` or `advanced`.
+10. If the user wants `pptx` or `both`, keep the slide roles clear enough to support a later manifest handoff.
+11. Include an upgrade path toward `basic`.
 
 `CHECKPOINT`:
 
@@ -396,7 +419,7 @@ This skill operates as a single inline agent - no role switching required.
 - [x] Lightweight structure prepared
 - [x] Visual direction prepared
 - [x] Minimal HTML route or prompt pack prepared
-- [ ] Next: auto-proceed to Step 15
+- [ ] Next: auto-proceed to Step 17
 ```
 
 ---
@@ -467,7 +490,43 @@ This skill operates as a single inline agent - no role switching required.
 
 ---
 
-### Step 8: Basic Workflow C - Image Plan
+### Step 8: Basic Workflow C - Visualization Planning
+
+`GATE`: Chosen mode is `basic`, and the user has confirmed the slide script.
+
+`EXECUTION`:
+
+1. Read `${SKILL_DIR}/references/visualization-layer.md`.
+2. Read `${SKILL_DIR}/references/visualization-engines.md`.
+3. Prepare the `visual_plan.md` artifact or inline equivalent.
+4. For each slide, decide whether it is:
+   - `text-led`
+   - `image-led`
+   - `chart-led`
+   - `diagram-led`
+   - `card-led`
+5. If a slide is visualized, record:
+   - chosen engine
+   - placement
+   - chart or diagram type
+   - content source
+   - style constraints inherited from the deck
+   - fallback mode
+6. Do not force visualization on a page that works better as text or image.
+7. If persistence is enabled, materialize it as `visual_plan.md`.
+
+`CHECKPOINT`:
+
+```markdown
+## Step 8 Complete
+- [x] Visualization decisions prepared
+- [x] visual_plan.md prepared when relevant
+- [ ] Next: auto-proceed to Step 9
+```
+
+---
+
+### Step 9: Basic Workflow D - Image Plan
 
 `GATE`: Chosen mode is `basic`, and the user has confirmed the slide script.
 
@@ -494,26 +553,27 @@ This skill operates as a single inline agent - no role switching required.
 `CHECKPOINT`:
 
 ```markdown
-## Step 8 Complete
+## Step 9 Complete
 - [x] Image plan prepared
 - [x] Slide-level keywords extracted
 - [x] Download attempts or fallback links recorded
-- [ ] Next: BLOCKING - wait for script and image confirmation
+- [ ] Next: BLOCKING - wait for script, visualization, and image confirmation
 ```
 
 ---
 
-### Step 9: Basic Workflow D - Static HTML
+### Step 10: Basic Workflow E - Static HTML
 
-`GATE`: Chosen mode is `basic`, and the user has confirmed the script and image plan.
+`GATE`: Chosen mode is `basic`, and the user has confirmed the script, visualization plan, and image plan.
 
 `EXECUTION`:
 
 1. Read `${SKILL_DIR}/references/quality-checker.md`.
-2. Run a lightweight QA pass over the approved breakdown, script, and image plan.
+2. Run a lightweight QA pass over the approved breakdown, script, visual plan, and image plan.
 3. Verify in `qa_report.md` or inline QA notes:
    - page sequence coherence
    - title hierarchy consistency
+   - visualization type and placement fit
    - image gaps or fallback links
    - page-thesis coverage
 4. Resolve or surface any remaining gaps before HTML generation.
@@ -528,15 +588,15 @@ This skill operates as a single inline agent - no role switching required.
 `CHECKPOINT`:
 
 ```markdown
-## Step 9 Complete
+## Step 10 Complete
 - [x] Static HTML generated
 - [x] Presentation grammar preserved
-- [ ] Next: auto-proceed to Step 15
+- [ ] Next: auto-proceed to Step 17
 ```
 
 ---
 
-### Step 10: Advanced Workflow A - Direction Selection
+### Step 11: Advanced Workflow A - Direction Selection
 
 `GATE`: Chosen mode is `advanced`.
 
@@ -559,7 +619,7 @@ This skill operates as a single inline agent - no role switching required.
 `CHECKPOINT`:
 
 ```markdown
-## Step 10 Complete
+## Step 11 Complete
 - [x] Brief artifact prepared
 - [x] Style options prepared
 - [ ] Next: BLOCKING - wait for direction choice
@@ -567,7 +627,7 @@ This skill operates as a single inline agent - no role switching required.
 
 ---
 
-### Step 11: Advanced Workflow B - Reference Lock Or Fallback
+### Step 12: Advanced Workflow B - Reference Lock Or Fallback
 
 `GATE`: Chosen mode is `advanced`, and the user has chosen a direction.
 
@@ -591,15 +651,15 @@ This skill operates as a single inline agent - no role switching required.
 `CHECKPOINT`:
 
 ```markdown
-## Step 11 Complete
+## Step 12 Complete
 - [x] Reference branch or no-network fallback completed
 - [x] Final visual not locked prematurely
-- [ ] Next: proceed to Step 12
+- [ ] Next: proceed to Step 13
 ```
 
 ---
 
-### Step 12: Advanced Workflow C - Script And Image Plan
+### Step 13: Advanced Workflow C - Script Lock
 
 `GATE`: Chosen mode is `advanced`, and either a reference image has been selected or the no-browsing fallback has completed.
 
@@ -610,6 +670,43 @@ This skill operates as a single inline agent - no role switching required.
 3. If normalized long-form source exists, derive `source_scene_map.md` before locking the final script shape.
 4. If local writing-style notes exist, scan likely style docs such as `voice_profile.md`, `brand.md`, `writing_style.md`, or project notes.
 5. Prepare the deck-script artifact.
+6. If persistence is enabled, materialize these as `deck_script.md` and `source_scene_map.md` when relevant.
+
+`BLOCKING`: Ask the user to confirm the slide script before visualization and image planning begin.
+
+`CHECKPOINT`:
+
+```markdown
+## Step 13 Complete
+- [x] Structured design constraints prepared
+- [x] Deck script prepared
+- [ ] Next: BLOCKING - wait for script confirmation
+```
+
+---
+
+### Step 14: Advanced Workflow D - Visualization And Image Plan
+
+`GATE`: Chosen mode is `advanced`, and the user has confirmed the slide script.
+
+`EXECUTION`:
+
+1. Read `${SKILL_DIR}/references/visualization-layer.md`.
+2. Read `${SKILL_DIR}/references/visualization-engines.md`.
+3. Prepare the `visual_plan.md` artifact or inline equivalent.
+4. For each slide, decide whether it is:
+   - `text-led`
+   - `image-led`
+   - `chart-led`
+   - `diagram-led`
+   - `card-led`
+5. For each visualized slide, record:
+   - chosen engine
+   - placement
+   - chart or diagram type
+   - content source
+   - style constraints inherited from the deck
+   - fallback mode
 6. For each slide that needs imagery:
    - compress the slide into one thesis
    - derive exactly **3 to 4 page-level keywords**
@@ -617,34 +714,34 @@ This skill operates as a single inline agent - no role switching required.
    - if browsing is unavailable, provide search strings and image intent instead of pretending search happened
 7. Attempt to download images into `assets/` only when downloading is available and persistence is enabled.
 8. If download fails, record the same fallback fields required by `basic` and surface the source link to the user.
-9. If persistence is enabled, materialize these as `deck_script.md`, `image_plan.md`, and `source_scene_map.md` when relevant.
+9. If persistence is enabled, materialize these as `visual_plan.md`, `image_plan.md`, and `source_scene_map.md` when relevant.
 10. If the export target includes PPTX, prepare the slide content with explicit export hints after the static deck is approved.
 
-`BLOCKING`: Ask the user to confirm the script and image plan before static HTML begins.
+`BLOCKING`: Ask the user to confirm the script, visualization plan, and image plan before static HTML begins.
 
 `CHECKPOINT`:
 
 ```markdown
-## Step 12 Complete
-- [x] Structured design constraints prepared
-- [x] Deck script prepared
+## Step 14 Complete
+- [x] visual_plan.md prepared when relevant
 - [x] Image plan prepared
-- [ ] Next: BLOCKING - wait for script and image confirmation
+- [ ] Next: BLOCKING - wait for script, visualization, and image confirmation
 ```
 
 ---
 
-### Step 13: Advanced Workflow D - Static HTML First
+### Step 15: Advanced Workflow E - Static HTML First
 
-`GATE`: Chosen mode is `advanced`, and the user has confirmed the script and image plan.
+`GATE`: Chosen mode is `advanced`, and the user has confirmed the script, visualization plan, and image plan.
 
 `EXECUTION`:
 
 1. Read `${SKILL_DIR}/references/quality-checker.md`.
-2. Run a lightweight QA pass over the approved breakdown, script, image plan, and design constraints.
+2. Run a lightweight QA pass over the approved breakdown, script, visual plan, image plan, and design constraints.
 3. Verify in `qa_report.md` or inline QA notes:
    - page sequence coherence
    - title hierarchy consistency
+   - visualization type and placement fit
    - image gaps or fallback links
    - page-thesis coverage
 4. Resolve or surface any remaining gaps before HTML generation.
@@ -659,7 +756,7 @@ This skill operates as a single inline agent - no role switching required.
 `CHECKPOINT`:
 
 ```markdown
-## Step 13 Complete
+## Step 15 Complete
 - [x] Static HTML generated
 - [x] Static-first delivery preserved
 - [ ] Next: BLOCKING - wait for motion decision
@@ -667,7 +764,7 @@ This skill operates as a single inline agent - no role switching required.
 
 ---
 
-### Step 14: Advanced Workflow E - Optional Motion Pass
+### Step 16: Advanced Workflow F - Optional Motion Pass
 
 `GATE`: Chosen mode is `advanced`, and the user explicitly asked for a motion pass after reviewing the static deck.
 
@@ -685,15 +782,15 @@ This skill operates as a single inline agent - no role switching required.
 `CHECKPOINT`:
 
 ```markdown
-## Step 14 Complete
+## Step 16 Complete
 - [x] Motion layer added after approval
 - [x] Reduced-motion support preserved
-- [ ] Next: auto-proceed to Step 15
+- [ ] Next: auto-proceed to Step 17
 ```
 
 ---
 
-### Step 15: Delivery
+### Step 17: Delivery
 
 `GATE`: The chosen mode workflow has completed.
 
@@ -724,7 +821,7 @@ This skill operates as a single inline agent - no role switching required.
 `CHECKPOINT`:
 
 ```markdown
-## Step 15 Complete
+## Step 17 Complete
 - [x] Final delivery follows the staged artifact order
 - [x] Presentation-first checks performed
 - [x] Image fallback links surfaced when needed

@@ -14,9 +14,13 @@ Check these items every time in non-trivial runs:
 2. Title hierarchy consistency
    - cover, section, and content pages follow a clear heading rhythm
    - no page is missing a usable headline unless that omission is intentional
-3. Image coverage
+3. Visualization fit
+   - every chart, diagram, infographic, or card matches the page thesis
+   - visualization placement supports the page's reading order
+   - chart styling still matches the deck's visual system
+4. Image coverage
    - every image-bearing slide has either a usable asset, a strong fallback link, or a deliberate no-image decision
-4. Page-thesis coverage
+5. Page-thesis coverage
    - every slide has a clear point, not just content fragments
 
 ## Optional Output
@@ -34,7 +38,7 @@ Recommended fields:
 
 - If a gap is small, fix it before HTML.
 - If a gap needs user judgment, surface it explicitly before HTML.
-- Do not treat HTML as ready when page-thesis coverage or image coverage is still ambiguous.
+- Do not treat HTML as ready when page-thesis coverage, visualization fit, or image coverage is still ambiguous.
 
 ## Purpose
 
