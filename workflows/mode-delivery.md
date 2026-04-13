@@ -41,7 +41,10 @@ If the request clearly says "start small and upgrade later", choose `quick` now 
 ## Guardrails
 
 - Do not migrate to a heavier stack just to get prettier components.
+- `basic` and `advanced` are strict default-step modes.
 - Do not skip the confirmation sequence in `basic` or `advanced`.
+- Do not treat a generic "continue" as permission to bypass a blocking checkpoint.
+- Only bypass a blocking checkpoint when the user explicitly names that override, or explicitly asks for an end-to-end run without confirmations.
 - Do not skip the source-to-scenes pass when long-form source material is the real starting point.
 - Do not skip the lightweight pre-HTML QA pass in non-trivial runs.
 - Do not use the full chart or diagram planning layer in `quick`.

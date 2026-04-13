@@ -53,6 +53,8 @@ Only materialize them as files such as `deck_brief.md`, `theme_breakdown.md`, `s
 - Do not generate final static HTML before the script, visual plan, and image plan are all confirmed.
 - Each blocking step should follow a real artifact, whether inline or persisted.
 - `deck.md` must not bypass the breakdown or script confirmation gates.
+- Default to strict step-by-step execution. Do not skip a checkpoint unless the user explicitly says to skip that named checkpoint or to run end-to-end without confirmations.
+- A generic "continue" means continue to the next allowed stage, not bypass the next blocking gate.
 
 ## Style Pack Requirements
 

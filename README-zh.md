@@ -17,6 +17,12 @@ PPTX 导出说明：这份开源版现在包含一条可选的 `PPTX export` 后
 
 ## 更新日志
 
+### 2026-04-13
+
+- 收紧了 `basic` 和 `advanced` 的执行语义，默认按严格分步流程运行。
+- 新增硬规则：像“继续”这类泛化指令，不视为跳过 blocking checkpoint 的许可。
+- 只有用户显性说明跳过某个确认点，或显性要求 end-to-end 无确认执行时，才允许跳步。
+
 ### 2026-04-11
 
 - 新增 Slidev-inspired 的 `deck.md` 草稿输入层，会先编译成 `deck_source.json` 再进入正常 deck 流程。

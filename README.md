@@ -7,6 +7,12 @@ It is now paired with an optional PPTX-export handoff for teams that want PowerP
 
 ## Update Log
 
+### 2026-04-13
+
+- Tightened `basic` and `advanced` into explicit strict-step modes by default.
+- Added a hard rule that generic requests like "continue" do not bypass blocking checkpoints.
+- Limited step skipping to clear user overrides such as named checkpoint skips or explicit end-to-end execution requests.
+
 ### 2026-04-11
 
 - Added a Slidev-inspired `deck.md` draft route that compiles into `deck_source.json` before entering the normal deck workflow.

@@ -32,6 +32,19 @@ description: >
 > 6. **FINAL ARTIFACT MUST RUN**: If the user wants a direct handoff, prefer a self-contained file or a locally runnable folder over a CDN-only prototype.
 
 > [!IMPORTANT]
+> ### Strict Execution Semantics For `basic` And `advanced`
+>
+> - Treat `basic` and `advanced` as strict finite-state workflows, not loose checklists.
+> - Advance only one stage at a time. Do not silently bundle multiple blocking stages into one jump.
+> - Silence, implied urgency, or generic requests such as "continue" do not count as permission to bypass required confirmations.
+> - Only bypass a blocking step when the user explicitly names that override in a clear instruction, for example:
+>   - `skip breakdown confirmation`
+>   - `do not ask for step-by-step confirmation`
+>   - `run the rest end-to-end without checkpoints`
+> - If the user gives a partial override, skip only the named checkpoint and keep the rest of the workflow strict.
+> - If the user does not clearly opt out, stay in the default strict step-by-step mode.
+
+> [!IMPORTANT]
 > ### Creator-First Delivery
 >
 > - Default delivery is **staged artifacts + HTML route or prompt pack + image plan**, not a long code dump.
@@ -476,7 +489,7 @@ This skill operates as a single inline agent - no role switching required.
 5. If persistence is enabled, materialize it as `deck_script.md`.
 6. Do not start keyword extraction or image search yet.
 
-`BLOCKING`: Ask the user to confirm the slide script before image work begins.
+`BLOCKING`: Ask the user to confirm the slide script before visualization and image work begin.
 
 `CHECKPOINT`:
 
@@ -548,7 +561,7 @@ This skill operates as a single inline agent - no role switching required.
 5. If persistence is enabled, materialize the plan as `image_plan.md`.
 6. Do not hide failed downloads. Surface the links to the user.
 
-`BLOCKING`: Ask the user to confirm the script plus image plan before HTML implementation begins.
+`BLOCKING`: Ask the user to confirm the script, visualization plan, and image plan before HTML implementation begins.
 
 `CHECKPOINT`:
 

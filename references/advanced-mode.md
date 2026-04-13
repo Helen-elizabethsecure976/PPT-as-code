@@ -56,6 +56,8 @@ Only materialize them as files if the user asks for persisted output or the repo
 - Do not add motion before the static deck is reviewed.
 - Do not let animation rewrite or distort the approved script.
 - Keep direct-handoff decks self-contained when possible.
+- Default to strict step-by-step execution. Do not skip a checkpoint unless the user explicitly names that override or explicitly asks to run end-to-end without confirmations.
+- A generic "continue" means proceed to the next allowed stage, not bypass the next blocking gate.
 
 ## Reference-Driven Design Rules
 
