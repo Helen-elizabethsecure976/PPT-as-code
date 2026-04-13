@@ -7,6 +7,12 @@ It is now paired with an optional PPTX-export handoff for teams that want PowerP
 
 ## Update Log
 
+### 2026-04-14
+
+- Added stronger presentation-copy constraints to cut unrelated filler, generic PPT meta language, and low-signal decorative sentences.
+- Added explicit large-type discipline: do not solve crowded slides with tiny text; split the content or remove weak copy instead.
+- Expanded pre-HTML QA to check copy relevance, title quality, and text density before HTML is treated as ready.
+
 ### 2026-04-13
 
 - Tightened `basic` and `advanced` into explicit strict-step modes by default.

@@ -22,6 +22,14 @@ Check these items every time in non-trivial runs:
    - every image-bearing slide has either a usable asset, a strong fallback link, or a deliberate no-image decision
 5. Page-thesis coverage
    - every slide has a clear point, not just content fragments
+6. Copy relevance
+   - no decorative filler or unrelated sentence survives on the slide
+   - titles read like points, not generic topic labels
+   - no obvious "PPT-sounding" meta language remains unless it is structurally necessary
+7. Text density
+   - the page does not rely on dense small text to fit the content
+   - the amount of visible copy matches the page role
+   - image-led or chart-led pages do not accumulate unnecessary support text
 
 ## Optional Output
 
@@ -38,7 +46,7 @@ Recommended fields:
 
 - If a gap is small, fix it before HTML.
 - If a gap needs user judgment, surface it explicitly before HTML.
-- Do not treat HTML as ready when page-thesis coverage, visualization fit, or image coverage is still ambiguous.
+- Do not treat HTML as ready when page-thesis coverage, visualization fit, copy relevance, text density, or image coverage is still ambiguous.
 
 ## Purpose
 

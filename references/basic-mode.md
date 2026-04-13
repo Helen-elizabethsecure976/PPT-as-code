@@ -56,6 +56,15 @@ Only materialize them as files such as `deck_brief.md`, `theme_breakdown.md`, `s
 - Default to strict step-by-step execution. Do not skip a checkpoint unless the user explicitly says to skip that named checkpoint or to run end-to-end without confirmations.
 - A generic "continue" means continue to the next allowed stage, not bypass the next blocking gate.
 
+## Copy And Density Constraints
+
+- Do not add any sentence that is not directly serving the page thesis.
+- Do not use generic PPT meta language such as `Overview`, `Background`, `Takeaway`, `Summary`, `Page 01`, or similar labels unless they are structurally necessary.
+- Prefer one strong statement plus minimal support copy.
+- Do not use small text as a compression trick. If the page only works with dense tiny type, split the content into more slides.
+- Avoid tiny captions and footnotes unless they are required for sources, numbers, or compliance.
+- If a page is image-led or chart-led, keep the text even lighter and let the visual carry the page.
+
 ## Style Pack Requirements
 
 The style-options artifact should include:

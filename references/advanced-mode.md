@@ -59,6 +59,15 @@ Only materialize them as files if the user asks for persisted output or the repo
 - Default to strict step-by-step execution. Do not skip a checkpoint unless the user explicitly names that override or explicitly asks to run end-to-end without confirmations.
 - A generic "continue" means proceed to the next allowed stage, not bypass the next blocking gate.
 
+## Copy And Density Constraints
+
+- Do not add any sentence that is not directly serving the page thesis.
+- Do not use generic PPT meta language such as `Overview`, `Background`, `Takeaway`, `Summary`, `Page 01`, or similar labels unless they are structurally necessary.
+- Prefer one strong statement plus minimal support copy.
+- Do not use small text as a compression trick. If the page only works with dense tiny type, split the content into more slides.
+- Avoid tiny captions and footnotes unless they are required for sources, numbers, or compliance.
+- If a page is image-led, chart-led, diagram-led, or card-led, keep the text even lighter and let the main visual carry the page.
+
 ## Reference-Driven Design Rules
 
 The chosen reference, or the chosen style direction in fallback mode, must be translated into structured constraints before HTML work begins.

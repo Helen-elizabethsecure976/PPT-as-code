@@ -105,6 +105,18 @@ description: >
 > - A finished deck must preserve clear slide roles such as cover, hook, concept, compare, quote, data, divider, and conclusion when relevant.
 
 > [!IMPORTANT]
+> ### Copy Relevance And Text-Density Rules
+>
+> - Every visible sentence on a slide must help the page thesis. If a line does not strengthen the point, cut it.
+> - Do not add decorative filler such as generic scene-setting, vague inspiration lines, empty transition copy, or "PPT-sounding" meta language.
+> - Avoid generic labels like `Overview`, `Background`, `Key Takeaway`, `Page 01`, `Closing Thoughts`, or similar scaffolding unless they carry real structural meaning for the audience.
+> - Prefer one strong statement plus a small amount of supporting text over dense explanatory copy.
+> - Do not solve crowded slides by shrinking type. If a page needs too much text, split the content into more slides or remove weak copy.
+> - Avoid tiny captions, tiny footnotes, and small-print annotations unless they are required for sources, numbers, or compliance.
+> - If a slide is image-led or chart-led, let the visual do the work. Do not add extra text just to fill space.
+> - Use short, high-signal headlines. A slide title should carry a point, not just a topic label.
+
+> [!IMPORTANT]
 > ### Style Lock Rules
 >
 > - `quick` and `basic` still need a real visual direction; do not return a bare technical skeleton.
@@ -486,8 +498,12 @@ This skill operates as a single inline agent - no role switching required.
    - scene or page purpose
    - headline or core copy
    - supporting copy or cue text
-5. If persistence is enabled, materialize it as `deck_script.md`.
-6. Do not start keyword extraction or image search yet.
+5. Apply the copy-relevance and text-density rules:
+   - remove any line that does not directly support the page thesis
+   - keep the visible copy sparse enough that the slide can stay large-type
+   - if the page only works with dense small text, split it into multiple slides instead of compressing it
+6. If persistence is enabled, materialize it as `deck_script.md`.
+7. Do not start keyword extraction or image search yet.
 
 `BLOCKING`: Ask the user to confirm the slide script before visualization and image work begin.
 
@@ -595,8 +611,9 @@ This skill operates as a single inline agent - no role switching required.
    - one active slide at a time
    - clear navigation state
    - visible progress or page furniture
-7. If persistence is enabled, materialize the final output as `index.html` and `qa_report.md` when needed.
-8. If the user wants a final artifact, prefer a self-contained HTML file or a locally runnable folder.
+7. Do not reduce font sizes just to fit too much copy on one slide. Remove text or split the page instead.
+8. If persistence is enabled, materialize the final output as `index.html` and `qa_report.md` when needed.
+9. If the user wants a final artifact, prefer a self-contained HTML file or a locally runnable folder.
 
 `CHECKPOINT`:
 
@@ -683,7 +700,11 @@ This skill operates as a single inline agent - no role switching required.
 3. If normalized long-form source exists, derive `source_scene_map.md` before locking the final script shape.
 4. If local writing-style notes exist, scan likely style docs such as `voice_profile.md`, `brand.md`, `writing_style.md`, or project notes.
 5. Prepare the deck-script artifact.
-6. If persistence is enabled, materialize these as `deck_script.md` and `source_scene_map.md` when relevant.
+6. Apply the copy-relevance and text-density rules:
+   - remove any line that does not directly support the page thesis
+   - keep the visible copy sparse enough that the slide can stay large-type
+   - if the page only works with dense small text, split it into multiple slides instead of compressing it
+7. If persistence is enabled, materialize these as `deck_script.md` and `source_scene_map.md` when relevant.
 
 `BLOCKING`: Ask the user to confirm the slide script before visualization and image planning begin.
 
@@ -761,8 +782,9 @@ This skill operates as a single inline agent - no role switching required.
 5. Generate the static HTML output first.
 6. Keep the approved content order and visual hierarchy intact.
 7. Do not add advanced motion in this step unless the user explicitly asked to skip the static-first pass.
-8. If persistence is enabled, materialize the output as `index.html` and `qa_report.md` when needed.
-9. If the export target includes PPTX, treat this static pass as the structure lock for `deck_manifest.json`.
+8. Do not reduce font sizes just to fit too much copy on one slide. Remove text or split the page instead.
+9. If persistence is enabled, materialize the output as `index.html` and `qa_report.md` when needed.
+10. If the export target includes PPTX, treat this static pass as the structure lock for `deck_manifest.json`.
 
 `BLOCKING`: Ask the user whether they want a motion pass after reviewing the static deck.
 
