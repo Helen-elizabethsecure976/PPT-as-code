@@ -12,6 +12,9 @@ It is now paired with an optional PPTX-export handoff for teams that want PowerP
 - Added stronger presentation-copy constraints to cut unrelated filler, generic PPT meta language, and low-signal decorative sentences.
 - Added explicit large-type discipline: do not solve crowded slides with tiny text; split the content or remove weak copy instead.
 - Expanded pre-HTML QA to check copy relevance, title quality, and text density before HTML is treated as ready.
+- Added edit-routing rules so modification requests are classified before editing and routed to the right upstream artifact.
+- Added `style_system.json` as the editable style source for fonts, colors, spacing, page furniture, and chart styling.
+- Added a rule that `index.html` should not be edited first unless the request is an implementation-only hotfix or no usable upstream artifact exists.
 
 ### 2026-04-13
 
@@ -196,6 +199,8 @@ ppt-as-code-open/
 |   |-- quality-checker.md
 |   |-- deck-dsl.md
 |   |-- deck-source-contract.md
+|   |-- change-routing.md
+|   |-- style-system-contract.md
 |   |-- pptx-export-handoff.md
 |   `-- evolution-log.md
 |-- companion-skills/
@@ -220,6 +225,16 @@ This package keeps HTML authoring and PPTX delivery separated on purpose.
 - Every slide is exported from a stable HTML render state as a screenshot.
 - PowerPoint is treated as a fidelity-first delivery container, not a native reconstruction target.
 - Motion stays HTML-only.
+
+## Editing Route
+
+- Structure changes should start from `theme_breakdown.md`.
+- Copy changes should start from `deck_script.md`.
+- Visualization changes should start from `visual_plan.md`.
+- Image changes should start from `image_plan.md`.
+- Style changes such as font size and color should start from `style_system.json`.
+- Export behavior changes should start from `deck_manifest.json`.
+- `index.html` should be treated as a downstream render target, not the first editing surface, unless the request is an implementation-only hotfix.
 
 ## deck.md Draft Route
 

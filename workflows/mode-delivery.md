@@ -52,3 +52,5 @@ If the request clearly says "start small and upgrade later", choose `quick` now 
 - Do not start PPTX export before the static HTML structure is approved.
 - Do not force file writes when the user has not asked for persisted artifacts.
 - Do not force web-reference search when browsing is unavailable.
+- When modifying an existing deck, update the correct upstream artifact before touching `index.html`.
+- Route style changes to `style_system.json` unless the request is explicitly an implementation-only hotfix.

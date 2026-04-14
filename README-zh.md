@@ -22,6 +22,9 @@ PPTX 导出说明：这份开源版现在包含一条可选的 `PPTX export` 后
 - 新增更强的 PPT 文案约束，要求删除与页主旨无关的句子、装饰性废话和空泛的 PPT 腔元语言。
 - 新增大字号纪律：不允许靠缩小字号硬塞内容；如果一页装不下，就拆页或删弱文案。
 - 扩展 pre-HTML QA，正式检查文案相关性、标题质量和文字密度，避免小字页和废话页进入最终 HTML。
+- 新增修改请求路由规则：收到修改指令时，先判断改的是结构、文案、图表、配图、样式还是导出，再路由到对应上游 artifact。
+- 新增 `style_system.json` 作为可编辑样式源，用来承接字体、颜色、间距、页面家具和图表样式调整。
+- 新增规则：除非是实现层 hotfix，或根本没有上游 artifact，否则不要先改 `index.html`。
 
 ### 2026-04-13
 
@@ -189,6 +192,8 @@ ppt-as-code-open/
 |   |-- quality-checker.md
 |   |-- deck-dsl.md
 |   |-- deck-source-contract.md
+|   |-- change-routing.md
+|   |-- style-system-contract.md
 |   |-- pptx-export-handoff.md
 |   `-- evolution-log.md
 |-- companion-skills/
@@ -210,6 +215,16 @@ ppt-as-code-open/
 - `pptx-export-for-ppt-as-code` 负责读取 `index.html`、`deck_manifest.json` 和 `assets/`，然后输出 `output.pptx`。
 - 简单页优先走可编辑 PPT 元素，复杂页允许整页截图 fallback。
 - 动效仍然只属于 HTML，不强行翻译成 PowerPoint 动画。
+
+## 修改路由
+
+- 改结构，优先改 `theme_breakdown.md`
+- 改文案，优先改 `deck_script.md`
+- 改图表或信息图，优先改 `visual_plan.md`
+- 改配图，优先改 `image_plan.md`
+- 改样式，比如字体大小、颜色、间距、进度条，优先改 `style_system.json`
+- 改导出行为，优先改 `deck_manifest.json`
+- `index.html` 默认是下游渲染结果，不是第一编辑入口；只有实现层 hotfix 才优先改它
 
 ## 三种模式分别会给什么
 

@@ -95,7 +95,7 @@ description: >
 >
 > - Default to **conversation-first artifacts**.
 > - Only write files when the user explicitly wants persisted deck materials, or when the repo already has a clearly compatible project structure that invites file-based output.
-> - When persistence is enabled, use conventional artifact names such as `deck_brief.md`, `theme_breakdown.md`, `style_options.md`, `deck_script.md`, `image_plan.md`, `index.html`, and `assets/`.
+> - When persistence is enabled, use conventional artifact names such as `deck_brief.md`, `theme_breakdown.md`, `style_options.md`, `deck_script.md`, `style_system.json`, `image_plan.md`, `index.html`, and `assets/`.
 
 > [!IMPORTANT]
 > ### PPT-First Grammar
@@ -170,6 +170,26 @@ description: >
 > - Runtime behavior must come from `SKILL.md` and the active mode/reference files.
 > - Stable feedback should be integrated into the main docs, not left in logs.
 
+> [!IMPORTANT]
+> ### Change Routing Rules
+>
+> - When the user asks to modify an existing deck, classify the request before editing anything.
+> - Route the change to the primary upstream artifact first:
+>   - structure change -> `theme_breakdown.md`
+>   - copy change -> `deck_script.md`
+>   - visualization change -> `visual_plan.md`
+>   - image change -> `image_plan.md`
+>   - style change -> `style_system.json`
+>   - export behavior change -> `deck_manifest.json`
+> - Global style changes such as font size, color system, spacing, radius, progress bar style, or chart label sizing belong in `style_system.json`.
+> - Slide-specific style exceptions also belong in `style_system.json`, using a `slide_overrides` block instead of editing HTML first.
+> - Do not treat `deck_manifest.json` as a content-editing source. It is a delivery-layer artifact.
+> - Do not edit `index.html` first unless:
+>   - the user explicitly asks for an HTML-only hotfix
+>   - the issue is implementation-specific
+>   - no usable upstream artifact exists
+> - After updating the primary artifact, regenerate only the affected downstream artifacts and then refresh HTML.
+
 ### Role Dispatch Protocol
 
 This skill operates as a single inline agent - no role switching required.
@@ -202,6 +222,8 @@ This skill operates as a single inline agent - no role switching required.
 | quality checker guide | `${SKILL_DIR}/references/quality-checker.md` | required before static HTML generation in non-trivial runs |
 | deck DSL reference | `${SKILL_DIR}/references/deck-dsl.md` | required only when input mode = `dsl` |
 | deck source contract | `${SKILL_DIR}/references/deck-source-contract.md` | required only when input mode = `dsl` |
+| change routing guide | `${SKILL_DIR}/references/change-routing.md` | required when refining or modifying an existing deck |
+| style system contract | `${SKILL_DIR}/references/style-system-contract.md` | required when style needs to be locked, edited, or regenerated |
 
 ### Workflows
 
@@ -240,27 +262,36 @@ This skill operates as a single inline agent - no role switching required.
    - refining an existing deck
    - choosing a route
    - improving script, style, imagery, or motion
-4. Decide the artifact persistence strategy:
+4. If the request is a modification, classify the primary change type:
+   - `structure_change`
+   - `copy_change`
+   - `visualization_change`
+   - `image_change`
+   - `style_change`
+   - `export_change`
+   - `implementation_hotfix`
+5. Decide the artifact persistence strategy:
    - default to conversation-first artifacts
    - enable file persistence only if the user asks for it or the repo clearly supports it
-5. If persistence is enabled, choose the nearest reasonable project folder or deck folder that matches repo conventions.
-6. Define the canonical artifact set for non-trivial runs:
+6. If persistence is enabled, choose the nearest reasonable project folder or deck folder that matches repo conventions.
+7. Define the canonical artifact set for non-trivial runs:
    - `deck_brief.md`
    - `theme_breakdown.md`
    - `style_options.md`
    - `deck_script.md`
+   - `style_system.json`
    - `visual_plan.md`
    - `image_plan.md`
    - `index.html`
    - `assets/`
-7. If the export target includes PPTX, add the optional export artifacts:
+8. If the export target includes PPTX, add the optional export artifacts:
    - `deck_manifest.json`
    - `output.pptx`
-8. If the input mode is `dsl`, add the optional draft artifact:
+9. If the input mode is `dsl`, add the optional draft artifact:
    - `deck_source.json`
-9. If the request starts from long source material, add the optional planning artifact:
+10. If the request starts from long source material, add the optional planning artifact:
    - `source_scene_map.md`
-10. For non-trivial `basic` or `advanced` runs, add the optional QA artifact:
+11. For non-trivial `basic` or `advanced` runs, add the optional QA artifact:
    - `qa_report.md`
 
 `CHECKPOINT`:
@@ -269,6 +300,7 @@ This skill operates as a single inline agent - no role switching required.
 ## Step 1 Complete
 - [x] Presentation request identified
 - [x] Missing inputs diagnosed
+- [x] Change type classified when relevant
 - [x] Persistence strategy defined
 - [ ] Next: auto-proceed to Step 1A
 ```
@@ -369,6 +401,8 @@ This skill operates as a single inline agent - no role switching required.
 8. Load `${SKILL_DIR}/references/quality-checker.md` before static HTML generation in non-trivial runs.
 9. Load `${SKILL_DIR}/references/pptx-export-handoff.md` only when the export target is `pptx` or `both`.
 10. Load `${SKILL_DIR}/references/deck-dsl.md` and `${SKILL_DIR}/references/deck-source-contract.md` only when the input mode is `dsl`.
+11. Load `${SKILL_DIR}/references/change-routing.md` when the request is about modifying an existing deck.
+12. Load `${SKILL_DIR}/references/style-system-contract.md` when style needs to be locked, changed, or regenerated.
 
 `CHECKPOINT`:
 
@@ -392,20 +426,29 @@ This skill operates as a single inline agent - no role switching required.
    - If persistence is enabled, materialize it as `deck_brief.md`.
    - Otherwise, keep it inline in the conversation.
 3. Decide which artifacts are required now versus later:
-   - `quick`: brief or outline, style directions, minimal HTML route
-   - `basic`: brief, breakdown, style options, script, visual plan, image plan, HTML
-   - `advanced`: same as `basic`, plus structured design constraints and optional motion follow-up
-   - long source input: add `source_scene_map.md` before the confirmed breakdown
-   - `dsl`: add `deck_source.json` as the normalized draft input artifact
-   - non-trivial runs: add `qa_report.md` as the pre-HTML QA artifact
-   - `pptx` or `both`: add manifest and PPTX handoff after static HTML is ready
-4. Record the missing gaps that must be resolved before HTML is allowed to begin.
+    - `quick`: brief or outline, style directions, minimal HTML route
+    - `basic`: brief, breakdown, style options, script, style system, visual plan, image plan, HTML
+    - `advanced`: same as `basic`, plus structured design constraints and optional motion follow-up
+    - long source input: add `source_scene_map.md` before the confirmed breakdown
+    - `dsl`: add `deck_source.json` as the normalized draft input artifact
+    - non-trivial runs: add `qa_report.md` as the pre-HTML QA artifact
+    - `pptx` or `both`: add manifest and PPTX handoff after static HTML is ready
+4. If the request is a modification, define the primary upstream artifact before touching HTML:
+   - structure -> `theme_breakdown.md`
+   - copy -> `deck_script.md`
+   - visualization -> `visual_plan.md`
+   - image -> `image_plan.md`
+   - style -> `style_system.json`
+   - export -> `deck_manifest.json`
+   - implementation-only hotfix -> `index.html`
+5. Record the missing gaps that must be resolved before HTML is allowed to begin.
 
 `CHECKPOINT`:
 
 ```markdown
 ## Step 4 Complete
 - [x] Artifact list defined for the chosen mode
+- [x] Primary upstream edit target chosen when relevant
 - [x] Immediate gaps recorded
 - [ ] Next: branch into the chosen mode workflow
 ```
@@ -493,17 +536,18 @@ This skill operates as a single inline agent - no role switching required.
 
 1. Lock the chosen style direction.
 2. If local writing-style notes exist, scan likely style docs such as `voice_profile.md`, `brand.md`, `writing_style.md`, or project notes.
-3. Prepare the deck-script artifact.
-4. The deck-script artifact must define slide by slide:
+3. Translate the chosen style direction into `style_system.json` or an equivalent structured style object before final HTML work begins.
+4. Prepare the deck-script artifact.
+5. The deck-script artifact must define slide by slide:
    - scene or page purpose
    - headline or core copy
    - supporting copy or cue text
-5. Apply the copy-relevance and text-density rules:
+6. Apply the copy-relevance and text-density rules:
    - remove any line that does not directly support the page thesis
    - keep the visible copy sparse enough that the slide can stay large-type
    - if the page only works with dense small text, split it into multiple slides instead of compressing it
-6. If persistence is enabled, materialize it as `deck_script.md`.
-7. Do not start keyword extraction or image search yet.
+7. If persistence is enabled, materialize these as `style_system.json` and `deck_script.md`.
+8. Do not start keyword extraction or image search yet.
 
 `BLOCKING`: Ask the user to confirm the slide script before visualization and image work begin.
 
@@ -512,6 +556,7 @@ This skill operates as a single inline agent - no role switching required.
 ```markdown
 ## Step 7 Complete
 - [x] Style locked
+- [x] style_system.json prepared when relevant
 - [x] Local voice guidance applied when available
 - [x] Deck script prepared
 - [ ] Next: BLOCKING - wait for script confirmation
@@ -696,7 +741,7 @@ This skill operates as a single inline agent - no role switching required.
 `EXECUTION`:
 
 1. Translate the chosen reference, or the chosen style direction in fallback mode, into structured design constraints before HTML work begins.
-2. Use a JSON design style system or an equivalent structured constraint format.
+2. Convert those constraints into `style_system.json` or an equivalent structured style object.
 3. If normalized long-form source exists, derive `source_scene_map.md` before locking the final script shape.
 4. If local writing-style notes exist, scan likely style docs such as `voice_profile.md`, `brand.md`, `writing_style.md`, or project notes.
 5. Prepare the deck-script artifact.
@@ -704,7 +749,7 @@ This skill operates as a single inline agent - no role switching required.
    - remove any line that does not directly support the page thesis
    - keep the visible copy sparse enough that the slide can stay large-type
    - if the page only works with dense small text, split it into multiple slides instead of compressing it
-7. If persistence is enabled, materialize these as `deck_script.md` and `source_scene_map.md` when relevant.
+7. If persistence is enabled, materialize these as `style_system.json`, `deck_script.md`, and `source_scene_map.md` when relevant.
 
 `BLOCKING`: Ask the user to confirm the slide script before visualization and image planning begin.
 
@@ -713,6 +758,7 @@ This skill operates as a single inline agent - no role switching required.
 ```markdown
 ## Step 13 Complete
 - [x] Structured design constraints prepared
+- [x] style_system.json prepared when relevant
 - [x] Deck script prepared
 - [ ] Next: BLOCKING - wait for script confirmation
 ```

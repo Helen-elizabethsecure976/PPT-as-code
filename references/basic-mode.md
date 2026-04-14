@@ -12,6 +12,7 @@ Return a staged artifact bundle, not just a final code block:
 - theme breakdown
 - style options
 - deck script
+- style system
 - visual plan
 - image plan
 - static HTML
@@ -19,6 +20,7 @@ Return a staged artifact bundle, not just a final code block:
 
 By default, keep these artifacts in conversation.
 Only materialize them as files such as `deck_brief.md`, `theme_breakdown.md`, `style_options.md`, `deck_script.md`, `image_plan.md`, and `index.html` if the user asks for persisted output or the repo clearly supports that workflow.
+When style is locked, prefer `style_system.json` as the editable style source.
 
 ## Non-Negotiable Sequence
 
@@ -55,6 +57,16 @@ Only materialize them as files such as `deck_brief.md`, `theme_breakdown.md`, `s
 - `deck.md` must not bypass the breakdown or script confirmation gates.
 - Default to strict step-by-step execution. Do not skip a checkpoint unless the user explicitly says to skip that named checkpoint or to run end-to-end without confirmations.
 - A generic "continue" means continue to the next allowed stage, not bypass the next blocking gate.
+
+## Edit Routing Rules
+
+- Structure changes should be applied to `theme_breakdown.md` first.
+- Copy changes should be applied to `deck_script.md` first.
+- Visualization changes should be applied to `visual_plan.md` first.
+- Image changes should be applied to `image_plan.md` first.
+- Style changes should be applied to `style_system.json` first.
+- Export changes should be applied to `deck_manifest.json` first.
+- Do not start with `index.html` unless the user explicitly asks for an implementation-only hotfix.
 
 ## Copy And Density Constraints
 

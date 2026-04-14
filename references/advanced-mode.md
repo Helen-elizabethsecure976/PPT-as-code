@@ -13,6 +13,7 @@ Return a staged build with these artifacts:
 - chosen reference set or style-direction fallback
 - structured design constraints
 - deck script
+- style system
 - visual plan
 - image plan
 - static HTML
@@ -21,6 +22,7 @@ Return a staged build with these artifacts:
 
 By default, keep these artifacts in conversation.
 Only materialize them as files if the user asks for persisted output or the repo clearly supports that workflow.
+When the visual direction is locked, prefer `style_system.json` as the editable style source.
 
 ## Non-Negotiable Sequence
 
@@ -58,6 +60,16 @@ Only materialize them as files if the user asks for persisted output or the repo
 - Keep direct-handoff decks self-contained when possible.
 - Default to strict step-by-step execution. Do not skip a checkpoint unless the user explicitly names that override or explicitly asks to run end-to-end without confirmations.
 - A generic "continue" means proceed to the next allowed stage, not bypass the next blocking gate.
+
+## Edit Routing Rules
+
+- Structure changes should be applied to `theme_breakdown.md` first.
+- Copy changes should be applied to `deck_script.md` first.
+- Visualization changes should be applied to `visual_plan.md` first.
+- Image changes should be applied to `image_plan.md` first.
+- Style changes should be applied to `style_system.json` first.
+- Export changes should be applied to `deck_manifest.json` first.
+- Do not start with `index.html` unless the user explicitly asks for an implementation-only hotfix.
 
 ## Copy And Density Constraints
 
