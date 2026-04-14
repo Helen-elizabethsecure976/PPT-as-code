@@ -19,6 +19,9 @@ PPTX 导出说明：这份开源版现在包含一条可选的 `PPTX export` 后
 
 ### 2026-04-14
 
+- 新增正式的 Workbench 方向，把 `deck_model.json` 定义为未来画布编辑的统一真源。
+- 新增 Workbench 架构与同步文档，明确 Canvas、Inspector、Outline、Sync Engine、Preview/Export 的职责分工。
+- 新增自由画布的同步边界，规定 `synced`、`needs_review` 和 `html_only_override` 三种结果。
 - 新增更强的 PPT 文案约束，要求删除与页主旨无关的句子、装饰性废话和空泛的 PPT 腔元语言。
 - 新增大字号纪律：不允许靠缩小字号硬塞内容；如果一页装不下，就拆页或删弱文案。
 - 扩展 pre-HTML QA，正式检查文案相关性、标题质量和文字密度，避免小字页和废话页进入最终 HTML。
@@ -66,6 +69,7 @@ PPTX 导出说明：这份开源版现在包含一条可选的 `PPTX export` 后
 - `advanced` 先出静态版，再决定要不要补动态，节奏更稳。
 - 现在还内置了一个“参考图搜索集”，把高信号英文站和中文 PPT 站分层整理好了。
 - `basic` 和 `advanced` 还能提前规划图表和图形表达，而且这些图表会继承整套 deck 的风格。
+- 现在还正式定义了未来的 PPT 工作台方向，但没有假装当前仓库已经自带完整前端编辑器。
 
 ## 核心特性
 
@@ -194,6 +198,9 @@ ppt-as-code-open/
 |   |-- deck-source-contract.md
 |   |-- change-routing.md
 |   |-- style-system-contract.md
+|   |-- deck-model-contract.md
+|   |-- workbench-architecture.md
+|   |-- workbench-sync.md
 |   |-- pptx-export-handoff.md
 |   `-- evolution-log.md
 |-- companion-skills/
@@ -225,6 +232,22 @@ ppt-as-code-open/
 - 改样式，比如字体大小、颜色、间距、进度条，优先改 `style_system.json`
 - 改导出行为，优先改 `deck_manifest.json`
 - `index.html` 默认是下游渲染结果，不是第一编辑入口；只有实现层 hotfix 才优先改它
+
+## Workbench 方向
+
+这份开源版现在也正式定义了一个未来的 PPT 工作台方向。
+
+- 它的定位是 `ppt-as-code` 的内部作者工作台，不是通用网页编辑器。
+- `deck_model.json` 是未来工作台里的统一画布真源。
+- 模块拆分为：
+  - Canvas
+  - Inspector
+  - Outline
+  - Sync Engine
+  - Preview / Export
+- 自由画布编辑应当先写入 `deck_model.json`，再同步回 artifact，最后再刷新 HTML。
+- 如果某个自由编辑无法安全同步，就应该限制它，或标记为 `needs_review` / `html_only_override`。
+- 当前这个仓库提供的是正式规范层，不是已经做好的完整前端工作台。
 
 ## 三种模式分别会给什么
 

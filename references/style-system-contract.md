@@ -95,3 +95,9 @@ Use `style_system.json` for:
 
 - Do not treat inline CSS or random HTML tweaks as the primary style source when `style_system.json` exists.
 - If an HTML tweak becomes stable or deck-wide, fold it back into `style_system.json`.
+
+## Workbench Rule
+
+- In workbench mode, Inspector edits should update `deck_model.json` first.
+- The sync layer should then project those edits into `style_system.json` or `slide_overrides`.
+- Do not let the Inspector write permanent style changes only into rendered HTML.

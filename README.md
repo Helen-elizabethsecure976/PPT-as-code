@@ -9,6 +9,9 @@ It is now paired with an optional PPTX-export handoff for teams that want PowerP
 
 ### 2026-04-14
 
+- Added a formal workbench direction with `deck_model.json` as the future unified canvas-editing source.
+- Added explicit workbench architecture and sync references for Canvas, Inspector, Outline, Sync Engine, and Preview/Export.
+- Defined sync-safe free-canvas boundaries with `synced`, `needs_review`, and `html_only_override` outcomes.
 - Added stronger presentation-copy constraints to cut unrelated filler, generic PPT meta language, and low-signal decorative sentences.
 - Added explicit large-type discipline: do not solve crowded slides with tiny text; split the content or remove weak copy instead.
 - Expanded pre-HTML QA to check copy relevance, title quality, and text density before HTML is treated as ready.
@@ -75,6 +78,7 @@ It removes private workspace assumptions, defaults to conversation-first artifac
 - Visualization layer. `basic` and `advanced` can plan charts, diagrams, infographics, and KPI cards before HTML implementation starts.
 - Optional PPTX delivery. HTML stays first, then a companion export skill can turn the approved deck into a screenshot-based `.pptx`.
 - Optional `deck.md` drafting. You can start from a Slidev-inspired draft file without turning the skill into a Slidev runtime.
+- Optional workbench direction. The spec now includes a future PPT-style canvas editor architecture without pretending that the current repo already ships a full editor UI.
 
 ## Feature Set
 
@@ -100,6 +104,7 @@ It also supports:
 - optional `source_scene_map.md` for long-form source decomposition
 - optional `qa_report.md` for pre-HTML checks
 - optional `reference-search-pack.md` for curated reference discovery
+- optional `deck_model.json` for workbench-driven visual editing
 - optional export targets: `html`, `pptx`, or `both`
 - a manifest handoff via `deck_manifest.json`
 
@@ -201,6 +206,9 @@ ppt-as-code-open/
 |   |-- deck-source-contract.md
 |   |-- change-routing.md
 |   |-- style-system-contract.md
+|   |-- deck-model-contract.md
+|   |-- workbench-architecture.md
+|   |-- workbench-sync.md
 |   |-- pptx-export-handoff.md
 |   `-- evolution-log.md
 |-- companion-skills/
@@ -235,6 +243,22 @@ This package keeps HTML authoring and PPTX delivery separated on purpose.
 - Style changes such as font size and color should start from `style_system.json`.
 - Export behavior changes should start from `deck_manifest.json`.
 - `index.html` should be treated as a downstream render target, not the first editing surface, unless the request is an implementation-only hotfix.
+
+## Workbench Direction
+
+This package now also defines a formal direction for a future PPT-style visual editor.
+
+- The workbench is scoped as an internal authoring layer for `ppt-as-code`, not a generic webpage editor.
+- `deck_model.json` is the future unified canvas-editing source.
+- The planned module split is:
+  - Canvas
+  - Inspector
+  - Outline
+  - Sync Engine
+  - Preview / Export
+- Free-canvas edits should flow through `deck_model.json`, then back into artifacts, then into HTML.
+- If a free-canvas edit cannot sync safely, the system should restrict it or mark it as `needs_review` or `html_only_override`.
+- This repo still ships a spec layer, not a complete frontend workbench implementation.
 
 ## deck.md Draft Route
 

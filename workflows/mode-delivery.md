@@ -54,3 +54,4 @@ If the request clearly says "start small and upgrade later", choose `quick` now 
 - Do not force web-reference search when browsing is unavailable.
 - When modifying an existing deck, update the correct upstream artifact before touching `index.html`.
 - Route style changes to `style_system.json` unless the request is explicitly an implementation-only hotfix.
+- When a workbench or canvas editor is in scope, treat `deck_model.json` as the editor-facing source and keep HTML downstream.

@@ -5,15 +5,16 @@ description: >
   use basic mode for confirmed deck planning plus script plus image flow, and use advanced mode
   for reference-driven decks, static-first delivery, optional motion follow-up, optional PPTX
   export handoff, optional source-material normalization, visualization planning for charts and
-  diagrams, and safe fallbacks when file persistence or web search is unavailable. Also supports
-  an optional Slidev-inspired `deck.md` draft input layer.
+  diagrams, an optional workbench architecture for visual editing, and safe fallbacks when file
+  persistence or web search is unavailable. Also supports an optional Slidev-inspired `deck.md`
+  draft input layer.
 ---
 
 # PPT as Code
 
 > Plan and build HTML-based presentations with a creator-first staged workflow.
 
-**Core Pipeline**: `Ingest -> Normalize Source Material When Needed -> Derive Source Scenes When Needed -> Detect Input Mode -> If DSL: Parse deck.md -> Compile deck_source.json -> Route Mode -> Load References -> Diagnose Gaps -> Produce Artifacts -> Confirm Key Decisions -> Plan Visualizations -> Plan Images -> Run Pre-HTML QA -> Deliver HTML -> Optional PPTX Export`
+**Core Pipeline**: `Ingest -> Normalize Source Material When Needed -> Derive Source Scenes When Needed -> Detect Input Mode -> If DSL: Parse deck.md -> Compile deck_source.json -> Route Mode -> Load References -> Diagnose Gaps -> Produce Artifacts -> Confirm Key Decisions -> Plan Visualizations -> Plan Images -> Run Pre-HTML QA -> Deliver HTML -> Optional Workbench Sync -> Optional PPTX Export`
 
 ---
 
@@ -171,6 +172,27 @@ description: >
 > - Stable feedback should be integrated into the main docs, not left in logs.
 
 > [!IMPORTANT]
+> ### Workbench Architecture Rules
+>
+> - A future visual workbench must not edit planning artifacts independently or let them drift.
+> - Use `deck_model.json` as the unified workbench editing source when a canvas editor is in scope.
+> - Workbench edits should first update `deck_model.json`, then synchronize upstream artifacts, then refresh HTML.
+> - Treat the workbench as an internal authoring layer for `ppt-as-code` decks, not as a generic webpage editor.
+> - The v1 workbench scope is limited to decks that already follow this skill's own artifact contracts.
+
+> [!IMPORTANT]
+> ### Workbench Sync Rules
+>
+> - `theme_breakdown.md`, `deck_script.md`, `style_system.json`, `visual_plan.md`, `image_plan.md`, and `deck_manifest.json` should not synchronize directly with one another.
+> - `deck_model.json` is the bridge between the visual canvas and the artifact layer.
+> - If a free-canvas operation cannot be projected back into the artifact system safely, prefer sync safety over visual freedom.
+> - In those cases, require one of these outcomes:
+>   - restrict the action
+>   - mark the result as `needs_review`
+>   - mark the result as `html_only_override`
+> - Never silently create multiple competing sources of truth.
+
+> [!IMPORTANT]
 > ### Change Routing Rules
 >
 > - When the user asks to modify an existing deck, classify the request before editing anything.
@@ -184,6 +206,7 @@ description: >
 > - Global style changes such as font size, color system, spacing, radius, progress bar style, or chart label sizing belong in `style_system.json`.
 > - Slide-specific style exceptions also belong in `style_system.json`, using a `slide_overrides` block instead of editing HTML first.
 > - Do not treat `deck_manifest.json` as a content-editing source. It is a delivery-layer artifact.
+> - In workbench mode, direct drag-and-resize edits should write to `deck_model.json` first, then sync into the correct artifact targets.
 > - Do not edit `index.html` first unless:
 >   - the user explicitly asks for an HTML-only hotfix
 >   - the issue is implementation-specific
@@ -224,6 +247,9 @@ This skill operates as a single inline agent - no role switching required.
 | deck source contract | `${SKILL_DIR}/references/deck-source-contract.md` | required only when input mode = `dsl` |
 | change routing guide | `${SKILL_DIR}/references/change-routing.md` | required when refining or modifying an existing deck |
 | style system contract | `${SKILL_DIR}/references/style-system-contract.md` | required when style needs to be locked, edited, or regenerated |
+| deck model contract | `${SKILL_DIR}/references/deck-model-contract.md` | required when the workbench or canvas editor is in scope |
+| workbench architecture | `${SKILL_DIR}/references/workbench-architecture.md` | required when evaluating or building a visual workbench |
+| workbench sync guide | `${SKILL_DIR}/references/workbench-sync.md` | required when workbench edits must flow back into artifacts |
 
 ### Workflows
 
@@ -262,6 +288,7 @@ This skill operates as a single inline agent - no role switching required.
    - refining an existing deck
    - choosing a route
    - improving script, style, imagery, or motion
+   - evaluating or defining a workbench / canvas editor
 4. If the request is a modification, classify the primary change type:
    - `structure_change`
    - `copy_change`
@@ -292,7 +319,10 @@ This skill operates as a single inline agent - no role switching required.
 10. If the request starts from long source material, add the optional planning artifact:
    - `source_scene_map.md`
 11. For non-trivial `basic` or `advanced` runs, add the optional QA artifact:
-   - `qa_report.md`
+    - `qa_report.md`
+12. If the request is about a workbench or visual editor, add the optional editor artifacts:
+    - `deck_model.json`
+    - `slide_overrides`
 
 `CHECKPOINT`:
 
@@ -403,6 +433,7 @@ This skill operates as a single inline agent - no role switching required.
 10. Load `${SKILL_DIR}/references/deck-dsl.md` and `${SKILL_DIR}/references/deck-source-contract.md` only when the input mode is `dsl`.
 11. Load `${SKILL_DIR}/references/change-routing.md` when the request is about modifying an existing deck.
 12. Load `${SKILL_DIR}/references/style-system-contract.md` when style needs to be locked, changed, or regenerated.
+13. Load `${SKILL_DIR}/references/deck-model-contract.md`, `${SKILL_DIR}/references/workbench-architecture.md`, and `${SKILL_DIR}/references/workbench-sync.md` when a visual workbench or canvas editor is in scope.
 
 `CHECKPOINT`:
 
@@ -433,6 +464,7 @@ This skill operates as a single inline agent - no role switching required.
     - `dsl`: add `deck_source.json` as the normalized draft input artifact
     - non-trivial runs: add `qa_report.md` as the pre-HTML QA artifact
     - `pptx` or `both`: add manifest and PPTX handoff after static HTML is ready
+    - workbench scope: add `deck_model.json` as the unified canvas source
 4. If the request is a modification, define the primary upstream artifact before touching HTML:
    - structure -> `theme_breakdown.md`
    - copy -> `deck_script.md`
@@ -878,13 +910,14 @@ This skill operates as a single inline agent - no role switching required.
 `EXECUTION`:
 
 1. Deliver in this order:
-   - export target
-   - chosen mode and why
-   - artifact status
-   - visual direction or chosen reference or fallback direction
-   - script status
-   - image status, including failed downloads and manual-download links
-   - static HTML status
+    - export target
+    - chosen mode and why
+    - artifact status
+    - `deck_model.json` status when a workbench route is in scope
+    - visual direction or chosen reference or fallback direction
+    - script status
+    - image status, including failed downloads and manual-download links
+    - static HTML status
    - `deck_manifest.json` status when the export target includes PPTX
    - `output.pptx` status or handoff status when the export target includes PPTX
    - optional motion status when relevant
@@ -908,3 +941,28 @@ This skill operates as a single inline agent - no role switching required.
 - [x] Image fallback links surfaced when needed
 - [x] PPTX handoff prepared when requested
 ```
+
+---
+
+## Optional Workbench Route
+
+Use this route only when the user is evaluating, specifying, or building a visual PPT-style editor for `ppt-as-code`.
+
+- Treat the workbench as a new product layer above the existing artifact workflow.
+- Use `deck_model.json` as the unified workbench editing source.
+- Preserve these module boundaries:
+  - Canvas for drag, resize, align, layer, and grouping interactions
+  - Inspector for typography, color, spacing, shadow, radius, and chart-style controls
+  - Outline for slide ordering, lock state, visibility, and element tree browsing
+  - Sync Engine for projection between `deck_model.json` and the artifact layer
+  - Preview / Export for HTML render validation and PPTX handoff preparation
+- Preserve these V1 element types only:
+  - `text`
+  - `image`
+  - `chart`
+  - `diagram`
+  - `card`
+  - `shape`
+  - `container`
+- Prefer sync integrity over unlimited visual freedom.
+- If a free-canvas action cannot project back into the artifact system safely, restrict it or mark it as `needs_review` or `html_only_override`.

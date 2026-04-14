@@ -7,6 +7,7 @@ Route deck modification requests to the correct upstream artifact before editing
 ## Core Rule
 
 - Do not start with `index.html` when a cleaner upstream artifact exists.
+- In workbench mode, do not start with an HTML patch either; write to `deck_model.json` first.
 - First classify the user's request.
 - Then update the primary artifact.
 - Then regenerate only the affected downstream artifacts and refresh HTML.
@@ -82,3 +83,10 @@ After changing the primary artifact:
 2. Regenerate the affected slides in HTML.
 3. Refresh `deck_manifest.json` only when export behavior or slide structure changed.
 4. Keep unrelated artifacts untouched whenever possible.
+
+In workbench mode:
+
+1. Update `deck_model.json` first.
+2. Project the change into the correct artifact target.
+3. Mark ambiguous sync results as `needs_review` or `html_only_override`.
+4. Only then refresh HTML and export state.
