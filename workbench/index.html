@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PPT as Code Workbench</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="wb-shell">
+      <header class="wb-topbar">
+        <div class="wb-brand">
+          <span class="wb-pill">Workbench v1</span>
+          <div>
+            <h1 id="wb-title">PPT as Code Visual Editor</h1>
+            <p id="wb-subtitle" class="wb-subtitle">Deck-first canvas editing with controlled HTML round-trip.</p>
+          </div>
+        </div>
+
+        <div class="wb-toolbar">
+          <div class="toolbar-group">
+            <button id="mode-deck-btn" class="btn btn-primary">Deck Mode</button>
+            <button id="mode-html-btn" class="btn">HTML Mode</button>
+            <label id="import-html-direct-label" for="import-html-direct-input" class="btn">Open HTML Direct</label>
+            <input id="import-html-direct-input" type="file" accept=".html,text/html" hidden />
+          </div>
+          <div class="toolbar-group">
+            <button id="lang-toggle-btn" class="btn">中文</button>
+          </div>
+
+          <div class="toolbar-group">
+            <button id="new-slide-btn" class="btn">New Slide</button>
+            <button id="delete-slide-btn" class="btn">Delete Slide</button>
+          </div>
+
+          <div class="toolbar-group">
+            <select id="new-element-type" class="toolbar-select">
+              <option value="text">Text</option>
+              <option value="bullets">Bullets</option>
+              <option value="quote">Quote</option>
+              <option value="stat">Stat</option>
+              <option value="card">Card</option>
+              <option value="image">Image</option>
+              <option value="shape">Shape</option>
+              <option value="container">Container</option>
+              <option value="diagram">Diagram</option>
+              <option value="chart">Chart</option>
+            </select>
+            <button id="add-element-btn" class="btn">Add Element</button>
+          </div>
+
+          <div class="toolbar-group">
+            <button id="duplicate-el-btn" class="btn">Duplicate</button>
+            <button id="delete-el-btn" class="btn btn-danger">Delete</button>
+            <button id="layer-up-btn" class="btn">Bring Forward</button>
+            <button id="layer-down-btn" class="btn">Send Backward</button>
+          </div>
+
+          <div class="toolbar-group">
+            <button id="export-btn" class="btn btn-primary">Export Model</button>
+            <button id="export-artifacts-btn" class="btn btn-primary">Export Artifacts</button>
+            <button id="export-html-btn" class="btn btn-primary">Export HTML</button>
+            <label id="import-model-label" for="import-model-input" class="btn">Import Model</label>
+            <input id="import-model-input" type="file" accept=".json,application/json" hidden />
+            <label id="import-html-label" for="import-html-input" class="btn">Import HTML</label>
+            <input id="import-html-input" type="file" accept=".html,text/html" hidden />
+          </div>
+        </div>
+      </header>
+
+      <main class="wb-main">
+        <aside class="wb-panel wb-panel-left">
+          <section>
+            <h2 id="slides-heading">Slides</h2>
+            <p id="slides-note" class="panel-note">Select a slide to work on. The HTML exporter includes stable `data-*` markers for round-trip import.</p>
+            <ul id="slides-list" class="slides-list"></ul>
+          </section>
+
+          <section>
+            <h2 id="elements-heading">Elements</h2>
+            <p id="elements-note" class="panel-note">Elements are object-based, like PPT, not free DOM fragments.</p>
+            <ul id="elements-list" class="elements-list"></ul>
+          </section>
+
+          <section>
+            <h2 id="shortcuts-heading">Shortcuts</h2>
+            <p id="shortcuts-note" class="panel-note">Delete, Cmd/Ctrl+D duplicate, Cmd/Ctrl+C copy, Cmd/Ctrl+V paste, arrows move, Shift+arrows move faster.</p>
+          </section>
+        </aside>
+
+        <section class="wb-canvas-wrap">
+          <div class="canvas-meta">
+            <div>
+              <strong id="deck-title-label">Untitled Deck</strong>
+              <span id="slide-size-label">16:9</span>
+            </div>
+            <div class="sync-state">
+              <span id="sync-prefix">Sync</span>:
+              <span id="sync-status-label">synced</span>
+            </div>
+          </div>
+
+          <div id="canvas-viewport" class="canvas-viewport">
+            <div id="slide-canvas" class="slide-canvas"></div>
+            <iframe id="html-direct-frame" class="html-direct-frame hidden" title="HTML Direct Canvas"></iframe>
+          </div>
+        </section>
+
+        <aside class="wb-panel wb-panel-right">
+          <section>
+            <h2 id="deck-style-heading">Deck Style</h2>
+            <div class="field">
+              <label id="deck-title-label-text" for="deck-title-input">Deck Title</label>
+              <input id="deck-title-input" type="text" />
+            </div>
+            <div class="field">
+              <label id="body-font-label-text" for="body-font-input">Body Font</label>
+              <input id="body-font-input" type="text" />
+            </div>
+            <div class="field">
+              <label id="display-font-label-text" for="display-font-input">Display Font</label>
+              <input id="display-font-input" type="text" />
+            </div>
+            <div class="field-grid field-grid-colors">
+              <div class="field">
+                <label id="bg-color-label-text" for="bg-color-input">Background</label>
+                <input id="bg-color-input" type="color" />
+              </div>
+              <div class="field">
+                <label id="fg-color-label-text" for="fg-color-input">Foreground</label>
+                <input id="fg-color-input" type="color" />
+              </div>
+              <div class="field">
+                <label id="accent-color-label-text" for="accent-color-input">Accent</label>
+                <input id="accent-color-input" type="color" />
+              </div>
+              <div class="field">
+                <label id="muted-color-label-text" for="muted-color-input">Muted</label>
+                <input id="muted-color-input" type="color" />
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h2 id="inspector-heading">Element Inspector</h2>
+            <p id="inspector-empty" class="panel-note">Select an element on the canvas.</p>
+            <div id="inspector-fields" class="inspector-fields hidden">
+              <div class="field">
+                <label id="el-type-label-text" for="el-type-input">Type</label>
+                <input id="el-type-input" type="text" disabled />
+              </div>
+
+              <div class="field">
+                <label id="el-variant-label-text" for="el-variant-input">Variant</label>
+                <select id="el-variant-input">
+                  <option value="body">body</option>
+                  <option value="title">title</option>
+                  <option value="caption">caption</option>
+                  <option value="metric">metric</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label id="el-text-label-text" for="el-text-input">Text / Lines</label>
+                <textarea id="el-text-input" rows="5"></textarea>
+              </div>
+
+              <div class="field">
+                <label id="el-src-label-text" for="el-src-input">Image URL</label>
+                <input id="el-src-input" type="text" />
+              </div>
+
+              <div class="field-grid">
+                <div class="field">
+                  <label id="el-x-label-text" for="el-x-input">X</label>
+                  <input id="el-x-input" type="number" step="1" />
+                </div>
+                <div class="field">
+                  <label id="el-y-label-text" for="el-y-input">Y</label>
+                  <input id="el-y-input" type="number" step="1" />
+                </div>
+                <div class="field">
+                  <label id="el-w-label-text" for="el-w-input">W</label>
+                  <input id="el-w-input" type="number" step="1" />
+                </div>
+                <div class="field">
+                  <label id="el-h-label-text" for="el-h-input">H</label>
+                  <input id="el-h-input" type="number" step="1" />
+                </div>
+              </div>
+
+              <div class="field-grid">
+                <div class="field">
+                  <label id="el-size-label-text" for="el-size-input">Font Size</label>
+                  <input id="el-size-input" type="number" step="1" />
+                </div>
+                <div class="field">
+                  <label id="el-weight-label-text" for="el-weight-input">Weight</label>
+                  <select id="el-weight-input">
+                    <option value="400">400</option>
+                    <option value="500">500</option>
+                    <option value="600">600</option>
+                    <option value="700">700</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="field-grid">
+                <div class="field">
+                  <label id="el-align-label-text" for="el-align-input">Align</label>
+                  <select id="el-align-input">
+                    <option value="left">left</option>
+                    <option value="center">center</option>
+                    <option value="right">right</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label id="el-v-align-label-text" for="el-v-align-input">Vertical</label>
+                  <select id="el-v-align-input">
+                    <option value="start">start</option>
+                    <option value="center">center</option>
+                    <option value="end">end</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="field-grid">
+                <div class="field">
+                  <label id="el-line-height-label-text" for="el-line-height-input">Line Height</label>
+                  <input id="el-line-height-input" type="number" step="0.05" />
+                </div>
+                <div class="field">
+                  <label id="el-letter-spacing-label-text" for="el-letter-spacing-input">Letter Spacing</label>
+                  <input id="el-letter-spacing-input" type="number" step="0.1" />
+                </div>
+              </div>
+
+              <div class="field-grid">
+                <div class="field">
+                  <label id="el-paragraph-spacing-label-text" for="el-paragraph-spacing-input">Paragraph Space</label>
+                  <input id="el-paragraph-spacing-input" type="number" step="1" />
+                </div>
+                <div class="field">
+                  <label id="el-padding-label-text" for="el-padding-input">Padding</label>
+                  <input id="el-padding-input" type="number" step="1" />
+                </div>
+              </div>
+
+              <div class="field-grid field-grid-colors">
+                <div class="field">
+                  <label id="el-color-label-text" for="el-color-input">Text</label>
+                  <input id="el-color-input" type="color" />
+                </div>
+                <div class="field">
+                  <label id="el-fill-label-text" for="el-fill-input">Fill</label>
+                  <input id="el-fill-input" type="color" />
+                </div>
+                <div class="field">
+                  <label id="el-border-color-label-text" for="el-border-color-input">Border</label>
+                  <input id="el-border-color-input" type="color" />
+                </div>
+                <div class="field">
+                  <label id="el-accent-label-text" for="el-accent-input">Accent</label>
+                  <input id="el-accent-input" type="color" />
+                </div>
+              </div>
+
+              <div class="field-grid">
+                <div class="field">
+                  <label id="el-border-width-label-text" for="el-border-width-input">Border W</label>
+                  <input id="el-border-width-input" type="number" step="1" />
+                </div>
+                <div class="field">
+                  <label id="el-radius-label-text" for="el-radius-input">Radius</label>
+                  <input id="el-radius-input" type="number" step="1" />
+                </div>
+              </div>
+
+              <div class="field-grid">
+                <div class="field">
+                  <label id="el-shape-variant-label-text" for="el-shape-variant-input">Shape Variant</label>
+                  <select id="el-shape-variant-input">
+                    <option value="rect">rect</option>
+                    <option value="rounded">rounded</option>
+                    <option value="pill">pill</option>
+                    <option value="circle">circle</option>
+                    <option value="line">line</option>
+                    <option value="arrow">arrow</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label id="el-appearance-label-text" for="el-appearance-input">Appearance</label>
+                  <select id="el-appearance-input">
+                    <option value="plain">plain</option>
+                    <option value="outlined">outlined</option>
+                    <option value="filled">filled</option>
+                    <option value="soft">soft</option>
+                    <option value="glass">glass</option>
+                    <option value="metric">metric</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="field-grid">
+                <div class="field">
+                  <label id="el-list-style-label-text" for="el-list-style-input">List Style</label>
+                  <select id="el-list-style-input">
+                    <option value="disc">disc</option>
+                    <option value="dash">dash</option>
+                    <option value="decimal">decimal</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label id="el-fit-label-text" for="el-fit-input">Image Fit</label>
+                  <select id="el-fit-input">
+                    <option value="cover">cover</option>
+                    <option value="contain">contain</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="field">
+                <label id="el-sync-label-text" for="el-sync-input">sync_status</label>
+                <select id="el-sync-input">
+                  <option value="synced">synced</option>
+                  <option value="needs_review">needs_review</option>
+                  <option value="html_only_override">html_only_override</option>
+                </select>
+              </div>
+            </div>
+          </section>
+        </aside>
+      </main>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

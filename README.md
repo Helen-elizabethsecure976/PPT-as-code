@@ -2,26 +2,50 @@
 
 English README. For Chinese, see [README-zh.md](./README-zh.md).
 
-`PPT as Code` is a creator-first skill for planning and building HTML-based presentations.
-It is now paired with an optional PPTX-export handoff for teams that want PowerPoint delivery after the static HTML deck is locked.
+`PPT as Code` is a creator-first skill for planning, designing, and building HTML-based presentations. It keeps the deck workflow stage-like, artifact-driven, and confirmation-aware instead of letting a presentation drift into a long webpage or a code-first prototype too early.
+
+This open-source package is the portable edition of the skill. It keeps the core workflow, but removes private workspace assumptions, makes file persistence safer by default, and includes explicit no-network / no-download fallbacks.
+
+## Why It Is Useful
+
+- It treats a deck as a staged communication artifact, not just "some slides."
+- It locks structure, style, script, imagery, and HTML in the right order.
+- It keeps `quick`, `basic`, and `advanced` modes, but makes `basic` and `advanced` confirmation-first by default.
+- It can normalize source material before deck planning starts.
+- It can plan charts and diagrams before HTML implementation.
+- It now ships with a runnable visual workbench prototype for PPT-style editing.
+
+## Core Principles
+
+- Presentation-first, not article-first.
+- Style should be explicit, even in lighter modes.
+- Image search should be page-aware, not deck-topic vague.
+- Static HTML should be approved before motion work starts.
+- Network access and file writes should be treated as capabilities, not assumptions.
+- `index.html` is usually a downstream render target, not the first editing surface.
 
 ## Update Log
 
 ### 2026-04-14
 
-- Added a formal workbench direction with `deck_model.json` as the future unified canvas-editing source.
+- Added a formal workbench direction with `deck_model.json` as the unified canvas-editing source.
 - Added explicit workbench architecture and sync references for Canvas, Inspector, Outline, Sync Engine, and Preview/Export.
-- Defined sync-safe free-canvas boundaries with `synced`, `needs_review`, and `html_only_override` outcomes.
+- Added a runnable `workbench/` prototype with PPT-like canvas editing, snapping, keyboard shortcuts, richer element types, and artifact projection.
+- Added a dual editing route in the workbench:
+  - `Deck Mode` for `deck_model.json`-driven editing
+  - `HTML Mode` for direct editing of an existing compatible HTML deck
+- Added `HTML Direct Mode v1` so users can open a built deck, select text or image nodes on the rendered page, edit them in Inspector, and export the updated source HTML.
+- Added controlled HTML import/export with stable `data-*` markers and embedded model JSON.
 - Added stronger presentation-copy constraints to cut unrelated filler, generic PPT meta language, and low-signal decorative sentences.
 - Added explicit large-type discipline: do not solve crowded slides with tiny text; split the content or remove weak copy instead.
-- Expanded pre-HTML QA to check copy relevance, title quality, and text density before HTML is treated as ready.
-- Added edit-routing rules so modification requests are classified before editing and routed to the right upstream artifact.
+- Expanded pre-HTML QA to check copy relevance, title quality, and text density.
+- Added edit-routing rules so modification requests are classified first and routed to the right upstream artifact.
 - Added `style_system.json` as the editable style source for fonts, colors, spacing, page furniture, and chart styling.
 - Added a rule that `index.html` should not be edited first unless the request is an implementation-only hotfix or no usable upstream artifact exists.
 
 ### 2026-04-13
 
-- Tightened `basic` and `advanced` into explicit strict-step modes by default.
+- Tightened `basic` and `advanced` into strict-step modes by default.
 - Added a hard rule that generic requests like "continue" do not bypass blocking checkpoints.
 - Limited step skipping to clear user overrides such as named checkpoint skips or explicit end-to-end execution requests.
 
@@ -34,53 +58,20 @@ It is now paired with an optional PPTX-export handoff for teams that want PowerP
 - Added a curated reference-search pack that combines high-signal global presentation sites and Chinese PPT ecosystems.
 - Added a visualization layer for `basic` and `advanced`, with `visual_plan.md`, engine selection, placement planning, and style inheritance for charts and diagrams.
 - Kept `quick` intentionally chart-free so the fast route stays lightweight.
-- Updated the open-source docs to explain the new upstream planning layers and artifact contracts.
 
 ### 2026-04-10
 
 - Removed private workspace assumptions from the open version and made artifact persistence conversation-first by default.
 - Added explicit no-browsing and no-download fallbacks so `advanced` can continue without pretending web search or downloads happened.
 - Separated runtime guidance from maintainer guidance and kept stable rules in the main skill docs instead of in maintenance logs.
-- Added bilingual project documentation with a dedicated [README-zh.md](./README-zh.md).
+- Added bilingual documentation with [README-zh.md](./README-zh.md).
 
 ### 2026-04-06
 
 - Simplified the PPTX export route to a screenshot-only workflow.
-- Removed editable, hybrid, and template-rebuild PPTX claims from the export spec.
 - Clarified that HTML remains the source of truth and PPTX is a fidelity-first delivery format.
 
-It is designed for workflows where a deck is not just "some slides," but a staged communication artifact that needs:
-
-- clear page roles
-- explicit pacing
-- intentional visual direction
-- page-aware image thinking
-- a path from rough idea to usable HTML
-
-## Why This Skill Is Useful
-
-This open-source package is the portable version of the skill.
-It removes private workspace assumptions, defaults to conversation-first artifacts, and includes safe fallbacks for environments that cannot browse the web or download files.
-
-## Highlights
-
-- Presentation-first, not article-first. The skill keeps the deck stage-like instead of letting it drift into a long webpage.
-- Staged artifacts before final code. It helps lock the brief, breakdown, script, and image plan before jumping into HTML.
-- Real visual direction, even in lighter modes. `quick` and `basic` still require style thinking instead of returning a bare technical scaffold.
-- Page-aware image workflow. Images are chosen from each slide's thesis, not from the deck topic as one giant vague prompt.
-- Safe file behavior. By default, artifacts stay in the conversation and only become files when the user wants persisted output or the repo clearly supports it.
-- Safe network behavior. If browsing or downloading is unavailable, the workflow falls back instead of pretending those actions happened.
-- Multi-source material ingestion. PDFs, docs, and web pages can be normalized into markdown before deck planning starts.
-- Source-to-scenes pre-decomposition. Long material can be compressed into likely slide groups before the confirmed breakdown.
-- Static-first delivery. In `advanced`, motion comes only after the static deck is reviewed.
-- Pre-HTML QA. A lightweight checker can catch page-order, title, thesis, and image gaps before implementation hardens them.
-- Curated reference-search pack. The skill now has a reusable source set for global slide inspiration and Chinese PPT ecosystems.
-- Visualization layer. `basic` and `advanced` can plan charts, diagrams, infographics, and KPI cards before HTML implementation starts.
-- Optional PPTX delivery. HTML stays first, then a companion export skill can turn the approved deck into a screenshot-based `.pptx`.
-- Optional `deck.md` drafting. You can start from a Slidev-inspired draft file without turning the skill into a Slidev runtime.
-- Optional workbench direction. The spec now includes a future PPT-style canvas editor architecture without pretending that the current repo already ships a full editor UI.
-
-## Feature Set
+## What The Skill Covers
 
 The skill supports three modes:
 
@@ -97,8 +88,8 @@ It also supports:
 - structured design constraints for implementation
 - page-level keyword extraction for image search
 - manual-download fallback when image downloads fail
-- optional persisted artifacts such as `deck_brief.md`, `deck_script.md`, `image_plan.md`, and `index.html`
-- optional `visual_plan.md` for chart and diagram planning
+- optional persisted artifacts such as `deck_brief.md`, `theme_breakdown.md`, `deck_script.md`, and `index.html`
+- optional `visual_plan.md` for chart, diagram, infographic, and KPI-card planning
 - optional `deck.md` input and normalized `deck_source.json`
 - optional normalized markdown source from PDF, document, or web material
 - optional `source_scene_map.md` for long-form source decomposition
@@ -127,23 +118,14 @@ At a high level, the skill follows a staged deck workflow:
 13. If needed, bridge the approved deck into `deck_manifest.json` for PPTX export.
 14. Add motion later only when the workflow and user approval justify it.
 
-The core idea is simple:
+## Safe Defaults In The Open Version
 
-- do not lock the deck too early
-- do not search images too vaguely
-- do not rely on web access or file writes unless they are available
-- do not mistake a webpage article for a real presentation
-
-## Safe Defaults In This Open Version
-
-This open-source copy intentionally differs from a private, repo-coupled version in a few ways.
-
-### 1. No hardcoded workspace structure
+### No hardcoded workspace structure
 
 The skill does not assume a folder such as `20_Projects/`.
 If the environment has no obvious deck directory, it keeps artifacts inline in the conversation unless the user explicitly asks to persist them.
 
-### 2. No hard dependency on local style files
+### No hard dependency on local style files
 
 If local writing-style notes are available, the skill may scan likely files such as:
 
@@ -154,7 +136,7 @@ If local writing-style notes are available, the skill may scan likely files such
 
 These are optional hints, not required inputs.
 
-### 3. No hard dependency on web search
+### No hard dependency on web search
 
 If browsing is available, `advanced` can search for real PPT or slide-design references.
 If browsing is unavailable, the skill skips that branch and derives structured design constraints directly from:
@@ -163,21 +145,110 @@ If browsing is unavailable, the skill skips that branch and derives structured d
 - user-provided inspiration
 - the topic and audience
 
-### 3.5 Source material can be normalized first
+### No hard dependency on image downloads
 
-When the environment exposes the right adapters, the skill can normalize source material into markdown before deck planning:
+If downloading is available, the skill may download chosen images into `assets/`.
+If downloading is unavailable or fails, it records source links or search strings and tells the user what to download manually.
+
+## Source-Material Normalization
+
+This package can also start from source material that is not already deck-shaped.
+
+- Normalize documents or web pages into markdown first.
+- If the result is still long-form, derive a scene map before the confirmed breakdown.
+- Extract the deck thesis and likely scenes from that markdown.
+- Then feed the result into `quick`, `basic`, or `advanced`.
+
+Recommended adapter mapping:
 
 - PDF -> `pdf_to_md.py`
 - DOCX / EPUB / HTML / LaTeX -> `doc_to_md.py`
 - ordinary web pages -> `web_to_md.py`
 - high-friction pages such as WeChat -> `web_to_md.cjs`
 
-If those adapters are not available, the workflow can still continue with manual summarization and an explicit fallback note.
+This is an upstream planning layer, not a rendering layer. HTML remains the presentation output.
 
-### 4. No hard dependency on image downloads
+## Reference Search Pack
 
-If downloading is available, the skill may download chosen images into `assets/`.
-If downloading is unavailable or fails, it records source links or search strings and tells the user what to download manually.
+This package includes a curated source pack for reference locking.
+
+Global sources:
+
+- Behance
+- Dribbble
+- SlideShare
+- Pitch
+
+Chinese sources:
+
+- 优品PPT
+- OfficePLUS
+- Docer
+- 51PPT
+- 站酷
+- iSlide
+
+The pack is meant to reduce random search drift and give the workflow a more repeatable reference-selection path.
+
+## Lightweight QA Route
+
+Before static HTML is generated in non-trivial runs, this package can run a lightweight QA pass.
+
+The QA focuses on:
+
+- page sequence coherence
+- title hierarchy consistency
+- missing image assets or fallback links
+- whether each slide has a clear thesis
+- whether the copy is relevant to the page purpose
+- whether the slide is too text-dense to present cleanly
+
+This pass is intentionally small and fast. It is meant to catch common deck-structure misses before implementation hardens them.
+
+## Workbench
+
+The repo now ships a runnable `workbench/` prototype for PPT-style editing.
+
+Current workbench direction:
+
+- `Deck Mode` edits `deck_model.json` as the canvas source of truth.
+- `HTML Mode` opens an existing compatible HTML deck and edits it directly on the rendered page.
+- The workbench supports PPT-like element editing, not raw CSS-first thinking.
+- Artifact projection can export:
+  - `deck_brief.md`
+  - `theme_breakdown.md`
+  - `deck_script.md`
+  - `visual_plan.md`
+  - `image_plan.md`
+  - `qa_report.md`
+  - `style_system.json`
+  - `deck_manifest.json`
+
+This is still an authoring prototype, not a finished production editor, but it already provides a practical route for:
+
+- faster layout edits
+- PPT-like formatting control
+- direct HTML deck touch-ups without collapsing the original page structure
+
+## Editing Route
+
+- Structure changes should start from `theme_breakdown.md`.
+- Copy changes should start from `deck_script.md`.
+- Visualization changes should start from `visual_plan.md`.
+- Image changes should start from `image_plan.md`.
+- Style changes such as font size, color, spacing, or page furniture should start from `style_system.json`.
+- Export behavior changes should start from `deck_manifest.json`.
+- `index.html` should be treated as a downstream render target, not the first editing surface, unless the request is an implementation-only hotfix.
+
+## PPTX Export Route
+
+This package keeps HTML authoring and PPTX delivery separated on purpose.
+
+- `ppt-as-code` owns the deck workflow, script, imagery, and final static HTML.
+- `pptx-export-for-ppt-as-code` consumes `index.html`, `deck_manifest.json`, and `assets/`.
+- Every slide is exported from a stable HTML render state as a screenshot.
+- PowerPoint is treated as a fidelity-first delivery container, not a native reconstruction target.
+- Motion stays HTML-only.
 
 ## Package Structure
 
@@ -219,243 +290,16 @@ ppt-as-code-open/
 |       `-- references/
 |           |-- manifest-contract.md
 |           `-- rendering-rules.md
-`-- workflows/
-    |-- mode-delivery.md
-    `-- evolution-writeback.md
+|-- workflows/
+|   |-- mode-delivery.md
+|   `-- evolution-writeback.md
+`-- workbench/
+    |-- index.html
+    |-- styles.css
+    |-- app.js
+    |-- deck_model.sample.json
+    `-- README.md
 ```
-
-## PPTX Export Route
-
-This package keeps HTML authoring and PPTX delivery separated on purpose.
-
-- `ppt-as-code` owns the deck workflow, script, imagery, and final static HTML.
-- `pptx-export-for-ppt-as-code` consumes `index.html`, `deck_manifest.json`, and `assets/`.
-- Every slide is exported from a stable HTML render state as a screenshot.
-- PowerPoint is treated as a fidelity-first delivery container, not a native reconstruction target.
-- Motion stays HTML-only.
-
-## Editing Route
-
-- Structure changes should start from `theme_breakdown.md`.
-- Copy changes should start from `deck_script.md`.
-- Visualization changes should start from `visual_plan.md`.
-- Image changes should start from `image_plan.md`.
-- Style changes such as font size and color should start from `style_system.json`.
-- Export behavior changes should start from `deck_manifest.json`.
-- `index.html` should be treated as a downstream render target, not the first editing surface, unless the request is an implementation-only hotfix.
-
-## Workbench Direction
-
-This package now also defines a formal direction for a future PPT-style visual editor.
-
-- The workbench is scoped as an internal authoring layer for `ppt-as-code`, not a generic webpage editor.
-- `deck_model.json` is the future unified canvas-editing source.
-- The planned module split is:
-  - Canvas
-  - Inspector
-  - Outline
-  - Sync Engine
-  - Preview / Export
-- Free-canvas edits should flow through `deck_model.json`, then back into artifacts, then into HTML.
-- If a free-canvas edit cannot sync safely, the system should restrict it or mark it as `needs_review` or `html_only_override`.
-- This repo still ships a spec layer, not a complete frontend workbench implementation.
-
-## deck.md Draft Route
-
-This package now supports a Slidev-inspired draft input layer.
-
-- Use `deck.md` when you want to sketch a deck quickly.
-- The syntax is inspired by Slidev ergonomics, not Slidev compatibility.
-- `deck.md` is compiled into `deck_source.json`.
-- `deck_source.json` then feeds the normal `quick`, `basic`, or `advanced` workflow.
-- `deck.md` speeds up drafting, but it does not bypass confirmation gates.
-
-## Visualization Route
-
-This package can also plan visualizations as part of the deck structure.
-
-- `quick` stays chart-free on purpose.
-- `basic` and `advanced` can create `visual_plan.md` before final HTML.
-- Visuals are selected page by page as `text-led`, `image-led`, `chart-led`, `diagram-led`, or `card-led`.
-- Current first-wave engines are:
-  - `vega`
-  - `infographic`
-  - `infocard`
-  - `mermaid`
-  - `architecture`
-- Visualization placement is planned early rather than improvised during HTML implementation.
-- All visualizations must inherit the deck's design constraints.
-
-## Source Material Route
-
-This package can also start from source material that is not already deck-shaped.
-
-- Normalize documents or web pages into markdown first.
-- If the result is still long-form, derive a scene map before the confirmed breakdown.
-- Extract the deck thesis and likely scenes from that markdown.
-- Then feed the result into `quick`, `basic`, or `advanced`.
-
-Recommended adapter mapping:
-
-- PDF -> `pdf_to_md.py`
-- DOCX / EPUB / HTML / LaTeX -> `doc_to_md.py`
-- ordinary web pages -> `web_to_md.py`
-- high-friction pages such as WeChat -> `web_to_md.cjs`
-
-This is an upstream planning layer, not a rendering layer. HTML still remains the presentation output.
-
-## Reference Search Pack
-
-This package now includes a curated source pack for reference locking.
-
-Global sources:
-
-- Behance
-- Dribbble
-- SlideShare
-- Pitch
-
-Chinese sources:
-
-- 优品PPT
-- OfficePLUS
-- Docer
-- 51PPT模板网
-- 站酷
-- iSlide
-
-The pack is meant to reduce random search drift and give the workflow a more repeatable reference-selection path.
-
-## Lightweight QA Route
-
-Before static HTML is generated in non-trivial runs, this package can run a lightweight QA pass.
-
-The QA focuses on:
-
-- page sequence coherence
-- title hierarchy consistency
-- missing image assets or fallback links
-- whether each slide has a clear thesis
-
-This is intentionally small and fast. It is meant to catch common deck-structure misses before implementation hardens them.
-
-## Mode Guide
-
-### Quick
-
-Best for:
-
-- MVP decks
-- rough prototypes
-- one-file demos
-- "start small, upgrade later"
-
-What you usually get:
-
-- a lightweight deck brief
-- 3 to 4 style directions if needed
-- one recommended direction
-- a minimal slide structure
-- a minimal HTML route or prompt pack
-
-### Basic
-
-Best for:
-
-- creator-facing deck development
-- situations where the topic is clear but the structure and style still need work
-- users who want the deck workflow to be explicit and confirmed before code
-
-What you usually get:
-
-- brief
-- theme breakdown
-- style options
-- confirmed deck script
-- image plan
-- static HTML
-
-### Advanced
-
-Best for:
-
-- more premium visual direction
-- stronger design locking before implementation
-- users who want a real reference-driven deck when browsing is available
-- workflows that may want a motion pass later
-
-What you usually get:
-
-- brief
-- style options
-- web reference branch or no-network fallback
-- structured design constraints
-- confirmed deck script
-- image plan
-- static HTML
-- optional motion pass after review
-
-## Image Workflow
-
-The image logic is intentionally page-aware.
-
-The skill does not search from the whole deck topic alone.
-Instead, for each image-bearing slide it:
-
-1. compresses the page into one thesis
-2. derives page-level keywords
-3. searches using those keywords plus the chosen style direction
-4. keeps only images that actually help the page communicate
-
-Keyword counts:
-
-- `basic`: 1 to 2 keywords per image-bearing slide
-- `advanced`: 3 to 4 keywords per image-bearing slide
-
-If downloading fails or is unavailable, the skill records the link or search string for manual acquisition.
-
-## File Persistence Policy
-
-This open version is conservative.
-
-It should **not** assume it can write into your repo.
-By default:
-
-- artifacts stay inline in the conversation
-- file output happens only when explicitly requested or clearly invited by repo structure
-
-This makes the skill safer for:
-
-- generic repositories
-- read-mostly environments
-- planning-first sessions
-- users who want deck thinking without repo mutation
-
-## Network Behavior
-
-### When browsing is available
-
-The skill may:
-
-- search for 3 presentation references in `advanced`
-- search for page-specific imagery
-- refine reference-driven visual decisions
-
-### When browsing is unavailable
-
-The skill should:
-
-- skip the web-reference step
-- synthesize structured design constraints from style words and user inspiration
-- output search strings or image intent instead of pretending web search happened
-
-### When downloading is unavailable
-
-The skill should:
-
-- keep source links or search strings
-- mark images as manual-download items
-- continue the workflow without blocking
 
 ## Installation Notes
 

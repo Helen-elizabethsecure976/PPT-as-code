@@ -1,0 +1,111 @@
+{
+  "deck": {
+    "title": "PPT Workbench Sample",
+    "mode": "advanced",
+    "export_target": "both",
+    "slide_size": "16:9"
+  },
+  "style_system": {
+    "deck_style": {
+      "direction": "cinematic-editorial",
+      "tone": "decisive, minimal, high-contrast"
+    },
+    "typography": {
+      "font_display": "Space Grotesk",
+      "font_body": "IBM Plex Sans",
+      "cover_title_size": 70,
+      "section_title_size": 44,
+      "body_size": 24,
+      "caption_size": 16
+    },
+    "color": {
+      "bg": "#f7f3ec",
+      "fg": "#101010",
+      "accent": "#ce542f",
+      "muted": "#786f65"
+    },
+    "slide_overrides": {}
+  },
+  "slides": [
+    {
+      "id": "slide_1",
+      "title": "AI Execution Gap",
+      "role": "cover",
+      "z_order": 1,
+      "elements": [
+        {
+          "id": "cover_title",
+          "type": "text",
+          "geometry": { "x": 120, "y": 140, "w": 1280, "h": 200, "rotation": 0 },
+          "layer": 1,
+          "text": "Most teams did not fail on models. They failed on execution design.",
+          "src": "",
+          "style": { "color": "#101010", "font_size": 68, "font_weight": 700, "border_radius": 0 },
+          "sync_status": "synced"
+        },
+        {
+          "id": "cover_subtitle",
+          "type": "text",
+          "geometry": { "x": 124, "y": 390, "w": 920, "h": 90, "rotation": 0 },
+          "layer": 2,
+          "text": "A creator-first deck should lock structure before styling flourishes.",
+          "src": "",
+          "style": { "color": "#2f2b25", "font_size": 32, "font_weight": 500, "border_radius": 0 },
+          "sync_status": "synced"
+        }
+      ],
+      "style_refs": { "global": true, "slide_override_key": "slide_1" },
+      "content_refs": {
+        "theme_breakdown": "slide_1",
+        "deck_script": "slide_1"
+      },
+      "sync_status": "synced"
+    },
+    {
+      "id": "slide_2",
+      "title": "Three Bottlenecks",
+      "role": "bullets",
+      "z_order": 2,
+      "elements": [
+        {
+          "id": "s2_title",
+          "type": "text",
+          "geometry": { "x": 130, "y": 96, "w": 760, "h": 110, "rotation": 0 },
+          "layer": 1,
+          "text": "Why delivery quality drops after draft one",
+          "src": "",
+          "style": { "color": "#101010", "font_size": 54, "font_weight": 700, "border_radius": 0 },
+          "sync_status": "synced"
+        },
+        {
+          "id": "s2_card",
+          "type": "card",
+          "geometry": { "x": 130, "y": 250, "w": 760, "h": 450, "rotation": 0 },
+          "layer": 2,
+          "text": "1) No stable decomposition.\n2) No style lock.\n3) No asset fallback.",
+          "src": "",
+          "style": { "color": "#2f2b25", "font_size": 34, "font_weight": 600, "border_radius": 18 },
+          "sync_status": "synced"
+        },
+        {
+          "id": "s2_image",
+          "type": "image",
+          "geometry": { "x": 960, "y": 160, "w": 500, "h": 580, "rotation": 0 },
+          "layer": 3,
+          "text": "",
+          "src": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1400&q=80",
+          "style": { "color": "#101010", "font_size": 24, "font_weight": 500, "border_radius": 14 },
+          "sync_status": "synced"
+        }
+      ],
+      "style_refs": { "global": true, "slide_override_key": "slide_2" },
+      "content_refs": {
+        "theme_breakdown": "slide_2",
+        "deck_script": "slide_2",
+        "image_plan": "slide_2"
+      },
+      "sync_status": "synced"
+    }
+  ],
+  "sync_status": "synced"
+}

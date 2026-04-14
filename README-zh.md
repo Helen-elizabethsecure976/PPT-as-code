@@ -1,177 +1,268 @@
 # PPT as Code
 
-deck.md 说明：这份开源版现在支持一个 Slidev-inspired 的 `deck.md` 草稿输入层。它只是更顺手的起稿方式，不是 Slidev 兼容模式，也不会引入 Slidev runtime。
-
-PPTX 导出说明：这份开源版现在包含一条可选的 `PPTX export` 后处理路线。先锁定静态 HTML deck，再通过 `deck_manifest.json` 交给 companion skill 导出 `.pptx`。
-
 中文说明。英文版请看 [README.md](./README.md)。
 
-`PPT as Code` 是一个面向内容创作者和产品表达场景的 HTML 演示文稿 skill。
+`PPT as Code` 是一个面向内容创作者的演示文稿工作流 skill，用来规划、设计并生成 HTML 版 PPT。它不是把“网页”和“PPT”粗暴拼在一起，而是把做 deck 真正需要的几个关键环节拆开并按顺序锁定：结构、风格、脚本、配图、可视化、HTML 落地，以及可选的 PPTX 交付。
 
-它不是把“网页”和“PPT”硬拼在一起，而是把一套真正适合演示的工作流结构化出来：
+这个开源版保留了核心工作流，但去掉了私有仓库依赖，默认更保守地处理写文件、联网搜索和图片下载，也补上了明确的 fallback 路径。
 
-- 先锁主题和结构
-- 再锁风格和脚本
-- 再处理图片和页面节奏
-- 最后再落成 HTML
+## 优点和特性
+
+- 演示优先，不是长网页优先。
+- `quick / basic / advanced` 三档保留，但 `basic` 和 `advanced` 默认都按确认式流程走。
+- 轻量模式也必须有风格方向，不会只给一个技术骨架。
+- 图片逻辑按页来做，不按整套 deck 的大主题粗搜。
+- 静态 HTML 先锁定，再决定要不要补动态。
+- 支持把 PDF、文档、网页等资料先规整成 markdown，再进入 deck 流程。
+- 支持在 HTML 落地前先规划图表、信息图和 KPI 卡。
+- 现在已经带有一个可运行的 PPT 工作台原型，可做更像 PPT 的画布编辑。
+
+## 原理很简单
+
+这个 skill 的底层原则其实就几条：
+
+- 不要太早锁死最终视觉。
+- 不要把网页排版误当成演示设计。
+- 不要用整套 deck 的大主题去模糊搜图。
+- 不要把高风险决策混成一步做完。
+- 不要默认假设一定能联网、能下载、能写文件。
+
+所以它的工作流是：
+
+1. 先补齐缺口。
+2. 再产出阶段性 artifact。
+3. 再确认高风险决策。
+4. 最后才进入 HTML。
+
+一句话概括就是：
+
+先把演示逻辑做对，再把页面做出来。
 
 ## 更新日志
 
 ### 2026-04-14
 
-- 新增正式的 Workbench 方向，把 `deck_model.json` 定义为未来画布编辑的统一真源。
-- 新增 Workbench 架构与同步文档，明确 Canvas、Inspector、Outline、Sync Engine、Preview/Export 的职责分工。
-- 新增自由画布的同步边界，规定 `synced`、`needs_review` 和 `html_only_override` 三种结果。
-- 新增更强的 PPT 文案约束，要求删除与页主旨无关的句子、装饰性废话和空泛的 PPT 腔元语言。
-- 新增大字号纪律：不允许靠缩小字号硬塞内容；如果一页装不下，就拆页或删弱文案。
-- 扩展 pre-HTML QA，正式检查文案相关性、标题质量和文字密度，避免小字页和废话页进入最终 HTML。
-- 新增修改请求路由规则：收到修改指令时，先判断改的是结构、文案、图表、配图、样式还是导出，再路由到对应上游 artifact。
-- 新增 `style_system.json` 作为可编辑样式源，用来承接字体、颜色、间距、页面家具和图表样式调整。
-- 新增规则：除非是实现层 hotfix，或根本没有上游 artifact，否则不要先改 `index.html`。
+- 正式定义了 Workbench 方向，把 `deck_model.json` 设为未来画布编辑的统一真源。
+- 增加了 Workbench 架构与同步规范，明确 Canvas、Inspector、Outline、Sync Engine、Preview / Export 的职责。
+- 增加了可运行的 `workbench/` 原型，支持更像 PPT 的画布编辑、吸附线、快捷键、更多元素类型和 artifact 导出。
+- 增加了双编辑模式：
+  - `Deck Mode`：基于 `deck_model.json` 做对象化编辑
+  - `HTML Mode`：直接打开兼容的 HTML deck，在渲染结果上修改
+- 增加了 `HTML Direct Mode v1`：可以打开已有成品 deck，选中文本或图片节点，在 Inspector 里直接改，并导出修改后的源 HTML。
+- 增加了受控 HTML 导入导出，输出稳定的 `data-*` 标记和内嵌 model JSON。
+- 增加了更强的 PPT 文案约束，减少与主旨无关的句子、PPT 腔和低信号装饰语。
+- 增加了大字号纪律：不要靠缩小字号硬塞内容；装不下就拆页或删弱文案。
+- 扩展了 pre-HTML QA，增加对文案相关性、标题质量和文字密度的检查。
+- 增加了修改请求路由规则，收到修改指令时先判断改的是结构、文案、图表、配图、样式还是导出行为，再去编辑对应上游 artifact。
+- 增加了 `style_system.json`，用来承接字体、颜色、间距、页面家具和图表样式的修改。
+- 增加了规则：除非是实现层 hotfix，或根本没有可用上游 artifact，否则不要先改 `index.html`。
 
 ### 2026-04-13
 
-- 收紧了 `basic` 和 `advanced` 的执行语义，默认按严格分步流程运行。
-- 新增硬规则：像“继续”这类泛化指令，不视为跳过 blocking checkpoint 的许可。
-- 只有用户显性说明跳过某个确认点，或显性要求 end-to-end 无确认执行时，才允许跳步。
+- 收紧了 `basic` 和 `advanced` 的执行语义，默认按严格步骤运行。
+- 增加硬规则：像“继续”这种泛化指令，不视为跳过 blocking checkpoint 的许可。
+- 只有用户显式说明跳过某个确认点，或显式要求 end-to-end 无确认执行时，才允许跳步。
 
 ### 2026-04-11
 
-- 新增 Slidev-inspired 的 `deck.md` 草稿输入层，会先编译成 `deck_source.json` 再进入正常 deck 流程。
-- 新增 source normalization，支持 PDF、DOCX、EPUB、HTML、LaTeX、普通网页、微信页这类材料先转成 markdown。
-- 新增 `source-to-scenes` 预拆解，让长文或长材料先压成可能的 slide groups，再进入正式的主题拆解。
-- 新增 pre-HTML QA，在落静态 HTML 前检查页序、标题层级、page thesis、缺图和 fallback 链接。
-- 新增 reference search pack，把 Behance、Dribbble、SlideShare、Pitch 以及中文 PPT 网站整理成可复用搜索集。
-- 新增 visualization layer，让 `basic` 和 `advanced` 可以提前规划图表、流程图、信息图和 KPI 卡。
-- 明确 `quick` 不做图表层，保持快速起稿路线的轻量和稳定。
-- 同步更新开源版文档，明确这些新增中间层和产物契约。
+- 增加了 Slidev-inspired 的 `deck.md` 草稿输入层，会先编译成 `deck_source.json` 再进入正常 deck 流程。
+- 增加了 source normalization，支持 PDF、DOCX、EPUB、HTML、LaTeX、普通网页、高摩擦网页等先转成 markdown。
+- 增加了 `source-to-scenes` 预拆解，让长文或长资料先压成可能的 slide groups，再进入正式主题拆解。
+- 增加了 pre-HTML QA，在落静态 HTML 前检查页序、标题层级、页级 thesis、缺图和 fallback 链接。
+- 增加了 reference search pack，把英文高信号站点和中文 PPT 站点整理成可复用搜索集。
+- 增加了 visualization layer，让 `basic` 和 `advanced` 可以先规划图表、流程图、信息图和 KPI 卡，再进入 HTML。
+- 明确 `quick` 不做图表层，保持快速起稿路线轻量稳定。
 
 ### 2026-04-10
 
-- 去掉开源版对私有 workspace 结构的默认依赖，改成 conversation-first artifact 策略。
-- 增加无浏览、无下载时的正式 fallback，让 `advanced` 不会因为环境能力不足而卡住。
-- 把 runtime 规则和 maintainer 规则分开，稳定规则直接写进主 skill 文档。
-- 新增中英双语 README，方便公开发布和协作。
+- 去掉了开源版对私有 workspace 结构的默认依赖，改成 conversation-first artifact 策略。
+- 增加了无浏览、无下载能力时的正式 fallback，避免 `advanced` 假装已经联网执行。
+- 分离了运行时规则和维护者规则，把稳定规则直接写进主 skill 文档。
+- 增加了中英双语 README。
 
 ### 2026-04-06
 
 - 把 PPTX 导出路线收敛成 screenshot-only workflow。
-- 删除可编辑混合导出、模板重建等过度承诺。
-- 明确 HTML 仍然是 source of truth，PPTX 是保真交付格式。
+- 明确 HTML 仍是 source of truth，PPTX 是保真交付格式。
 
-## 这个 Skill 的优点
+## 模式结构
 
-- 更像做一套演示，而不是拼一篇网页长文。
-- 不会一上来就乱写代码，先把关键决策锁住。
-- 轻模式也有视觉方向，不会只给你一个技术骨架。
-- 搜图是按每一页的核心判断来做，不是按整套 deck 大主题瞎搜。
-- 没有网络、不能下载图片、不能写文件时，也不会直接卡死。
-- `advanced` 先出静态版，再决定要不要补动态，节奏更稳。
-- 现在还内置了一个“参考图搜索集”，把高信号英文站和中文 PPT 站分层整理好了。
-- `basic` 和 `advanced` 还能提前规划图表和图形表达，而且这些图表会继承整套 deck 的风格。
-- 现在还正式定义了未来的 PPT 工作台方向，但没有假装当前仓库已经自带完整前端编辑器。
+这个 skill 保留三种模式：
 
-## 核心特性
+1. `quick`
+   适合 MVP、快速原型、先跑起来再升级的需求。
+2. `basic`
+   适合先确认主题拆解，再确认脚本和图片方案，最后再落 HTML。
+3. `advanced`
+   适合更强的设计锁定、更完整的参考图流程、静态优先以及后续可选的动态补全。
 
-### 1. 三档工作流
+额外支持的能力包括：
 
-- `quick`
-  适合最小可用版本、快速原型、先跑起来再升级。
-- `basic`
-  适合先确认主题拆解，再确认脚本，再确认图片方案，最后再落 HTML。
-- `advanced`
-  适合更强的视觉锁定、更完整的参考图流程、静态优先、后续可补动态。
+- 创作者导向的风格推荐
+- 结构化设计约束
+- 页级关键词提取与搜图
+- 图片下载失败时的链接 fallback
+- 可选 artifact：`deck_brief.md`、`theme_breakdown.md`、`deck_script.md`、`image_plan.md`、`index.html`
+- 可选 `visual_plan.md`，用于图表、图解、信息图、KPI 卡规划
+- 可选 `deck.md` 输入和 `deck_source.json`
+- 可选 `deck_model.json`，作为工作台编辑真源
+- 可选导出目标：`html`、`pptx`、`both`
+- 可选 `deck_manifest.json`，给 PPTX 导出 companion skill 使用
 
-### 2. 默认对话优先
+## 工作流怎么走
 
-开源版默认不会假设你的仓库里一定能写文件。
+高层流程是这样的：
 
-它会先在对话中产出这些阶段性内容：
+1. 先接收主题、受众、上下文和已有素材。
+2. 如果输入来自 PDF、DOCX、EPUB、HTML、LaTeX 或网页，先规整成 markdown。
+3. 如果素材仍然是长文，先做 source-to-scenes 预拆解。
+4. 判断输入是普通结构化输入，还是 `deck.md` 草稿。
+5. 如果有 `deck.md`，先编译成 `deck_source.json`。
+6. 判断缺的是结构、风格、参考、脚本还是图片。
+7. 路由到 `quick`、`basic` 或 `advanced`。
+8. 先产出阶段性 artifact，再进入最终 HTML。
+9. 在 `basic` 和 `advanced` 中，需要时先规划图表、图解和信息图。
+10. 对高风险步骤设置明确确认点。
+11. 在 HTML 前跑一轮轻量 QA。
+12. 先落静态 HTML。
+13. 如果需要 PPTX，再通过 `deck_manifest.json` 交给 companion skill。
+14. 动效永远是后续阶段，不抢在前面做。
 
-- brief
-- 主题拆解
-- 风格选项
-- 脚本
-- 图片方案
-- HTML 路线或静态结果
+## 开源版的安全默认值
 
-只有在下面两种情况下，才建议把这些内容真正写进仓库：
+### 不硬编码目录结构
 
-- 用户明确要求落地成文件
-- 当前仓库结构明显适合这种文件化工作流
+开源版不假设你一定有 `20_Projects/` 这种目录。
+如果当前环境没有明显兼容的项目结构，就默认把 artifact 先保留在对话里，只有用户明确要求落地时才写文件。
 
-### 3. 有网络就增强，没网络也能继续
+### 不强依赖本地文风文件
 
-如果环境支持浏览：
+如果本地有写作风格相关文件，可以扫描类似下面这些：
 
-- `advanced` 可以先找 3 个真实 PPT / slide design 参考图
-- 可以按页搜索图片
-- 可以做更完整的参考图驱动流程
+- `voice_profile.md`
+- `brand.md`
+- `writing_style.md`
+- 项目笔记
 
-如果环境不支持浏览：
+这些都只是提示信息，不是硬依赖。
 
-- 不会卡在“必须先搜到参考图”
-- 会直接根据风格词、用户给的灵感和主题，生成 structured design constraints
-- 会给搜索词和图片意图，而不是假装已经搜过图
+### 不强依赖联网搜索
 
-### 4. 图片逻辑是按页走，不是按主题走
+如果能联网，`advanced` 可以去找真实参考图。
+如果不能联网，就直接根据：
 
-这个 skill 不会拿整套 deck 的大主题直接搜图。
+- 已选风格方向
+- 用户提供的参考或灵感
+- 主题与受众
 
-它会先：
+来生成结构化设计约束，而不是假装已经搜过图。
 
-1. 压出这一页到底想说什么
-2. 提炼这页自己的关键词
-3. 再拿关键词加风格方向去搜
+### 不强依赖图片下载
 
-关键词规则：
+如果能下载，就把选中的图片放进 `assets/`。
+如果不能下载或下载失败，就记录原图链接或搜索词，并明确告诉用户哪些图需要手动处理。
 
-- `basic`：每页 1 到 2 个关键词
-- `advanced`：每页 3 到 4 个关键词
+## 资料规整层
 
-### 5. 动态是第二阶段，不是默认第一阶段
+这个包支持从还没长成 deck 的资料开始：
 
-在 `advanced` 里，动态效果不是默认先做。
+- 先把文档或网页规整成 markdown。
+- 如果结果仍是长文，再先拆成潜在 scenes。
+- 从这些 markdown 里提取 deck thesis 和可能的页面组。
+- 然后再喂给 `quick`、`basic` 或 `advanced`。
 
-顺序是：
+推荐适配器映射：
 
-1. 先锁风格
-2. 先锁脚本和图片
-3. 先出静态 HTML
-4. 用户确认后，再决定要不要补动态
+- PDF -> `pdf_to_md.py`
+- DOCX / EPUB / HTML / LaTeX -> `doc_to_md.py`
+- 普通网页 -> `web_to_md.py`
+- 高摩擦网页，如微信页 -> `web_to_md.cjs`
 
-这样能避免很多“动画先飞起来了，但内容和结构其实还没锁”的问题。
+这是一层上游规划能力，不是渲染层。最终演示输出仍然是 HTML。
 
-## 原理很简单
+## 参考图搜索集
 
-这个 skill 的底层原理，其实就几条：
+开源版现在内置了一套参考图搜索集，减少“随便搜图、结果很飘”的问题。
 
-- 不要过早锁定最终页面
-- 不要把“网页排版”误当成“演示设计”
-- 不要用整套 deck 的大主题去粗暴搜图
-- 不要把高风险决策混成一步做完
-- 不要把网络能力、下载能力、写文件能力当成理所当然
+全局来源：
 
-所以它的流程设计是：
+- Behance
+- Dribbble
+- SlideShare
+- Pitch
 
-1. 先补缺口
-2. 再做阶段性产物
-3. 再确认高风险决策
-4. 最后才进入 HTML
+中文来源：
 
-如果你把它理解成一句话，就是：
+- 优品PPT
+- OfficePLUS
+- Docer
+- 51PPT
+- 站酷
+- iSlide
 
-先把演示逻辑做对，再把页面做出来。
+它的作用不是替你自动完成设计，而是让参考锁定更可复用、更稳定。
 
-## 它适合什么场景
+## 轻量 QA
 
-- 想用 HTML 做 stage-like 演示的人
-- 想把 deck workflow 结构化的人
-- 有 rough notes，但没有清晰拆解和风格方向的人
-- 想先锁静态版，再决定要不要补动画的人
-- 想把图片逻辑做得更贴页，而不是更花哨的人
+在非 trivial 的流程里，静态 HTML 落地前可以先跑一轮轻量 QA。
 
-## Package 结构
+它重点检查：
+
+- 页序是否连贯
+- 标题层级是否一致
+- 是否缺图或缺 fallback 链接
+- 每页是否有明确 thesis
+- 文案是否真的服务于页面主旨
+- 文字是否过密，已经不适合演示
+
+这一步故意保持轻量，目的是在实现硬化前抓住最常见的 deck 结构问题。
+
+## Workbench
+
+仓库现在已经带有一个可运行的 `workbench/` 原型，目标是提供更像 PPT 的编辑体验。
+
+当前方向是：
+
+- `Deck Mode`：编辑 `deck_model.json`，以对象模型为核心
+- `HTML Mode`：直接打开兼容的 HTML deck，在渲染页面上做改动
+- 支持更像 PPT 的元素和样式编辑，而不是让用户直接想 CSS
+- 可以从当前模型导出这些上游 artifact：
+  - `deck_brief.md`
+  - `theme_breakdown.md`
+  - `deck_script.md`
+  - `visual_plan.md`
+  - `image_plan.md`
+  - `qa_report.md`
+  - `style_system.json`
+  - `deck_manifest.json`
+
+它现在还是作者工具原型，不是完整生产级编辑器，但已经能覆盖三类很实际的场景：
+
+- 更快地调布局
+- 用 PPT 式的方式改文字、颜色、间距和图层
+- 在不打碎原始页面结构的前提下，直接修已有 HTML deck
+
+## 修改路由
+
+- 改结构，优先改 `theme_breakdown.md`
+- 改文案，优先改 `deck_script.md`
+- 改图表或信息图，优先改 `visual_plan.md`
+- 改配图，优先改 `image_plan.md`
+- 改样式，比如字号、颜色、间距、页眉页脚、进度条，优先改 `style_system.json`
+- 改导出行为，优先改 `deck_manifest.json`
+- `index.html` 默认是下游渲染结果，不是第一编辑入口；除非是实现层 hotfix
+
+## PPTX 导出路线
+
+这个项目故意把 HTML 创作和 PPTX 交付分开：
+
+- `ppt-as-code` 负责主题、风格、脚本、配图和静态 HTML
+- `pptx-export-for-ppt-as-code` 负责读取 `index.html`、`deck_manifest.json` 和 `assets/`
+- 每一页都从稳定的 HTML 渲染状态导出为截图
+- PowerPoint 被当作保真交付容器，不是原生重建目标
+- 动效仍然只属于 HTML
+
+## 包结构
 
 ```text
 ppt-as-code-open/
@@ -211,175 +302,28 @@ ppt-as-code-open/
 |       `-- references/
 |           |-- manifest-contract.md
 |           `-- rendering-rules.md
-`-- workflows/
-    |-- mode-delivery.md
-    `-- evolution-writeback.md
+|-- workflows/
+|   |-- mode-delivery.md
+|   `-- evolution-writeback.md
+`-- workbench/
+    |-- index.html
+    |-- styles.css
+    |-- app.js
+    |-- deck_model.sample.json
+    `-- README.md
 ```
 
-## PPTX Export Route
+## 安装说明
 
-- `ppt-as-code` 继续负责主题、风格、脚本、图片和静态 HTML。
-- `pptx-export-for-ppt-as-code` 负责读取 `index.html`、`deck_manifest.json` 和 `assets/`，然后输出 `output.pptx`。
-- 简单页优先走可编辑 PPT 元素，复杂页允许整页截图 fallback。
-- 动效仍然只属于 HTML，不强行翻译成 PowerPoint 动画。
+这个文件夹名是 `ppt-as-code-open`，是为了避免和私有本地版本冲突。
 
-## 修改路由
+如果你想把它作为标准包发布或安装：
 
-- 改结构，优先改 `theme_breakdown.md`
-- 改文案，优先改 `deck_script.md`
-- 改图表或信息图，优先改 `visual_plan.md`
-- 改配图，优先改 `image_plan.md`
-- 改样式，比如字体大小、颜色、间距、进度条，优先改 `style_system.json`
-- 改导出行为，优先改 `deck_manifest.json`
-- `index.html` 默认是下游渲染结果，不是第一编辑入口；只有实现层 hotfix 才优先改它
+1. 需要时把目录重命名为 `ppt-as-code`
+2. 保持 `SKILL.md` 里的 skill 名仍为 `ppt-as-code`
+3. 在你自己的 skill 目录中安装，或直接从这个目录发布
 
-## Workbench 方向
-
-这份开源版现在也正式定义了一个未来的 PPT 工作台方向。
-
-- 它的定位是 `ppt-as-code` 的内部作者工作台，不是通用网页编辑器。
-- `deck_model.json` 是未来工作台里的统一画布真源。
-- 模块拆分为：
-  - Canvas
-  - Inspector
-  - Outline
-  - Sync Engine
-  - Preview / Export
-- 自由画布编辑应当先写入 `deck_model.json`，再同步回 artifact，最后再刷新 HTML。
-- 如果某个自由编辑无法安全同步，就应该限制它，或标记为 `needs_review` / `html_only_override`。
-- 当前这个仓库提供的是正式规范层，不是已经做好的完整前端工作台。
-
-## 三种模式分别会给什么
-
-### Quick
-
-一般会给你：
-
-- 轻量 brief
-- 3 到 4 个风格方向
-- 一个推荐方向
-- 最小 slide 结构
-- 一个最小 HTML 路线或 prompt pack
-
-### Basic
-
-一般会给你：
-
-- brief
-- 主题拆解
-- 风格选项
-- 确认过的脚本
-- 图片方案
-- 静态 HTML
-
-### Advanced
-
-一般会给你：
-
-- brief
-- 风格选项
-- 参考图分支或无网络 fallback
-- structured design constraints
-- 确认过的脚本
-- 图片方案
-- 静态 HTML
-- 可选的动态补全
-
-## 文件落地策略
-
-开源版是保守的。
-
-它默认不假设自己可以直接写你的仓库。
-
-默认行为是：
-
-- 先在对话里输出阶段性内容
-- 只有用户明确要求、或者仓库结构明显支持时，才真正写出这些文件
-
-可能写出的文件包括：
-
-- `deck_brief.md`
-- `theme_breakdown.md`
-- `style_options.md`
-- `deck_script.md`
-- `image_plan.md`
-- `index.html`
-- `assets/`
-
-## 网络与下载策略
-
-### 能浏览时
-
-它可以：
-
-- 在 `advanced` 里找 3 个参考图
-- 按页搜图
-- 用真实参考图锁视觉方向
-
-### 不能浏览时
-
-它会：
-
-- 跳过 web reference 分支
-- 直接根据风格词和用户灵感生成 structured design constraints
-- 给出搜索词、图片意图和实现约束
-
-### 不能下载时
-
-它会：
-
-- 保留图片链接或搜索字符串
-- 标记为需要手动下载
-- 不让整个流程卡住
-
-## 参考图搜索集
-
-这份开源版现在内置了一个参考图搜索集，用来减少“随便搜图、结果很飘”的问题。
-
-英文高信号来源：
-
-- Behance
-- Dribbble
-- SlideShare
-- Pitch
-
-中文来源：
-
-- 优品PPT
-- OfficePLUS
-- 稻壳儿 / Docer
-- 51PPT模板网
-- 站酷
-- iSlide
-
-它们的职责不完全一样：
-
-- Behance / Dribbble 更适合锁视觉方向
-- SlideShare / Pitch 更适合看真实 deck 节奏
-- 中文 PPT 站更适合补中文办公场景、汇报场景和本地视觉语境
-
-## 图表与图形层
-
-这份开源版现在把图表和图形表达也接进了正式工作流，但只在 `basic` 和 `advanced` 中启用。
-
-- `quick` 不做图表层，避免把快速版拖重。
-- `basic` 和 `advanced` 会先产出 `visual_plan.md`，再进入最终 HTML。
-- 每一页会先判断它到底更适合：
-  - `text-led`
-  - `image-led`
-  - `chart-led`
-  - `diagram-led`
-  - `card-led`
-- 当前第一批接入的图形引擎是：
-  - `vega`
-  - `infographic`
-  - `infocard`
-  - `mermaid`
-  - `architecture`
-- 图表放置位置也会提前规划，而不是到 HTML 阶段临时塞。
-- 所有图表和图形都必须继承 deck 的设计风格，而不是各自长成另一套系统。
-
-## 示例 Prompt
+## 提示词示例
 
 ### Quick
 
@@ -408,9 +352,9 @@ If not, synthesize the design constraints directly from the style direction.
 
 ## 维护与贡献
 
-这份开源版把“运行时文档”和“维护者文档”分开了。
+这个包把运行时规则和维护者规则分开了。
 
-如果你想看维护规则，可以继续看：
+维护和贡献相关内容见：
 
 - [README.md](./README.md)
 - [CONTRIBUTING.md](./CONTRIBUTING.md)
@@ -419,5 +363,4 @@ If not, synthesize the design constraints directly from the style direction.
 
 维护原则很简单：
 
-稳定规则，直接写回主文档。
-不要长期堆在 log 里。
+稳定规则应当回写进主文档，而不是长期堆在日志里。
